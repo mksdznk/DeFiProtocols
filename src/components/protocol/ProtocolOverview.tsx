@@ -62,7 +62,7 @@ export function ProtocolOverview({
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 {overview.chains.map((chain) => (
-                  <Badge key={chain.name} variant="secondary">
+                  <Badge key={chain.name} variant="outline">
                     {chain.name}
                   </Badge>
                 ))}
