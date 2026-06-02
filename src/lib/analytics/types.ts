@@ -3,8 +3,12 @@
  *
  * Every protocol exposes its metrics through an {@link AnalyticsAdapter}. The
  * UI never talks to a data source directly — it talks to an adapter. v1 ships a
- * mock adapter per protocol; real sources (LiFi API, DefiLlama, Dune, subgraphs)
- * can be swapped in behind the same interface without touching components.
+ * mock adapter per protocol; real sources (subgraphs, DefiLlama, Dune, protocol
+ * APIs) can be swapped in behind the same interface without touching components.
+ *
+ * The model is deliberately protocol-agnostic: a set of headline metrics, one
+ * labeled timeseries (volume for a bridge, TVL for a lending market, …), and a
+ * list of labeled breakdown tables (top routes, top markets, top chains, …).
  *
  * Every payload carries provenance (`source`, `asOf`, `isSample`) so the UI can
  * always show where a number came from, how fresh it is, and whether it's real.
@@ -12,6 +16,7 @@
 
 /** Canonical metric identifiers a protocol config can request for its KPI strip. */
 export type MetricKey =
+  // Volume / activity (bridges, DEXs, aggregators)
   | "totalVolume"
   | "volume24h"
   | "volume7d"
@@ -25,9 +30,22 @@ export type MetricKey =
   | "supportedTokens"
   | "supportedRoutes"
   | "avgCompletionTimeSec"
-  | "routeSuccessRate";
+  | "routeSuccessRate"
+  // Money markets / lending
+  | "totalValueLocked"
+  | "totalSupplied"
+  | "totalBorrowed"
+  | "availableLiquidity"
+  | "activeMarkets"
+  | "supportedAssets"
+  | "utilizationRate";
 
-export type MetricFormat = "currency" | "number" | "compact" | "percent" | "duration";
+export type MetricFormat =
+  | "currency"
+  | "number"
+  | "compact"
+  | "percent"
+  | "duration";
 
 export interface MetricDelta {
   /** Signed percentage change over the metric's comparison window. */
@@ -56,18 +74,28 @@ export interface TimeseriesPoint {
 
 export type TimeRange = "7d" | "30d" | "90d" | "1y";
 
-export interface TopRouteRow {
-  fromChain: string;
-  toChain: string;
-  /** Volume in USD for the period. */
-  volumeUsd: number;
+/** A single named trend line (e.g. "Bridging volume", "Total value locked"). */
+export interface TimeseriesResult {
+  label: string;
+  format: MetricFormat;
+  points: TimeseriesPoint[];
+}
+
+export interface BreakdownRow {
+  /** Row label, e.g. "Ethereum → Arbitrum", "USDC", "Ethereum". */
+  label: string;
+  /** Primary value in USD. */
+  valueUsd: number;
   sharePct: number;
 }
 
-export interface TopChainRow {
-  chain: string;
-  volumeUsd: number;
-  sharePct: number;
+/** A labeled table, e.g. top routes / top markets / top chains. */
+export interface Breakdown {
+  id: string;
+  title: string;
+  /** Header for the value column, e.g. "Volume (30d)", "TVL". */
+  valueHeader: string;
+  rows: BreakdownRow[];
 }
 
 /** Provenance attached to every adapter response. */
@@ -88,7 +116,6 @@ export type Provenanced<T> = DataProvenance & { data: T };
  */
 export interface AnalyticsAdapter {
   getMetrics(keys: MetricKey[]): Promise<Provenanced<MetricResult[]>>;
-  getVolumeSeries(range: TimeRange): Promise<Provenanced<TimeseriesPoint[]>>;
-  getTopRoutes(limit?: number): Promise<Provenanced<TopRouteRow[]>>;
-  getTopChains(limit?: number): Promise<Provenanced<TopChainRow[]>>;
+  getTimeseries(range: TimeRange): Promise<Provenanced<TimeseriesResult>>;
+  getBreakdowns(): Promise<Provenanced<Breakdown[]>>;
 }

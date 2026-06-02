@@ -1,58 +1,30 @@
 import type {
   AnalyticsAdapter,
+  Breakdown,
   MetricKey,
   MetricResult,
   Provenanced,
   TimeRange,
-  TimeseriesPoint,
-  TopChainRow,
-  TopRouteRow,
+  TimeseriesResult,
 } from "@/lib/analytics/types";
 import { METRIC_META } from "@/lib/analytics/metrics-meta";
+import {
+  buildTimeseries,
+  delay,
+  provenance,
+  withShares,
+} from "@/lib/analytics/mock";
 
 /**
  * LiFi analytics adapter — MOCK source (v1).
  *
- * Returns deterministic, realistic-looking sample data so the analytics UI can
- * be built and reviewed without a live data pipeline. Everything is flagged
- * `isSample: true` and labeled "Sample data" in the UI — no fake precision is
- * presented as real. A real adapter (LiFi API / DefiLlama / Dune / subgraph)
- * can replace this behind the same {@link AnalyticsAdapter} interface with no
- * change to the components.
- *
- * Data is seeded (no Math.random) so server and client renders agree and the
- * numbers stay stable across reloads.
+ * Deterministic, realistic-looking sample data so the analytics UI can be built
+ * and reviewed without a live pipeline. Everything is flagged `isSample: true`
+ * and labeled "Sample data" in the UI. A real adapter (LiFi API / DefiLlama /
+ * Dune / subgraph) can replace this behind the same {@link AnalyticsAdapter}.
  */
 
-const SAMPLE_SOURCE = "Sample data";
-
-/** Deterministic PRNG (mulberry32). */
-function seededRng(seed: number): () => number {
-  let s = seed >>> 0;
-  return () => {
-    s = (s + 0x6d2b79f5) | 0;
-    let t = Math.imul(s ^ (s >>> 15), 1 | s);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-/** Simulate a small network delay so loading states are visible/realistic. */
-function delay<T>(value: T, ms = 280): Promise<T> {
-  return new Promise((resolve) => setTimeout(() => resolve(value), ms));
-}
-
-function provenance<T>(data: T): Provenanced<T> {
-  return {
-    data,
-    source: SAMPLE_SOURCE,
-    asOf: new Date().toISOString(),
-    isSample: true,
-  };
-}
-
-// Baseline sample figures (clearly illustrative, LiFi-scale order of magnitude).
-const BASE_VALUES: Record<MetricKey, number> = {
+const BASE_VALUES: Partial<Record<MetricKey, number>> = {
   totalVolume: 62_400_000_000,
   volume24h: 84_300_000,
   volume7d: 612_000_000,
@@ -69,7 +41,6 @@ const BASE_VALUES: Record<MetricKey, number> = {
   routeSuccessRate: 98.7,
 };
 
-// Deterministic deltas (signed % change vs. the prior comparable window).
 const DELTAS: Partial<Record<MetricKey, number>> = {
   totalVolume: 1.8,
   volume24h: 6.2,
@@ -83,13 +54,15 @@ const DELTAS: Partial<Record<MetricKey, number>> = {
   routeSuccessRate: 0.2,
 };
 
+const MONTHLY_VOLUME = BASE_VALUES.volume30d!;
+
 function buildMetric(key: MetricKey): MetricResult {
   const meta = METRIC_META[key];
   const changePct = DELTAS[key];
   return {
     key,
     label: meta.label,
-    value: BASE_VALUES[key],
+    value: BASE_VALUES[key] ?? 0,
     format: meta.format,
     hint: meta.hint,
     delta:
@@ -97,85 +70,72 @@ function buildMetric(key: MetricKey): MetricResult {
         ? undefined
         : {
             changePct,
-            direction:
-              changePct > 0 ? "up" : changePct < 0 ? "down" : "flat",
-            windowLabel: deltaWindowLabel(key),
+            direction: changePct > 0 ? "up" : changePct < 0 ? "down" : "flat",
+            windowLabel: key.includes("24h")
+              ? "vs. prev. day"
+              : key.includes("7d")
+                ? "vs. prev. week"
+                : key.includes("30d")
+                  ? "vs. prev. month"
+                  : "30d",
           },
   };
 }
 
-function deltaWindowLabel(key: MetricKey): string {
-  if (key.includes("24h")) return "vs. prev. day";
-  if (key.includes("7d")) return "vs. prev. week";
-  if (key.includes("30d")) return "vs. prev. month";
-  return "30d";
-}
-
-const RANGE_DAYS: Record<TimeRange, number> = {
-  "7d": 7,
-  "30d": 30,
-  "90d": 90,
-  "1y": 365,
-};
-
 export const lifiAnalyticsAdapter: AnalyticsAdapter = {
-  getMetrics(keys: MetricKey[]) {
+  getMetrics(keys: MetricKey[]): Promise<Provenanced<MetricResult[]>> {
     return delay(provenance(keys.map(buildMetric)));
   },
 
-  getVolumeSeries(range: TimeRange) {
-    const days = RANGE_DAYS[range];
-    const rng = seededRng(1337 + days);
-    const daily = BASE_VALUES.volume24h;
-    const points: TimeseriesPoint[] = [];
-
-    const now = new Date();
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date(now);
-      date.setUTCDate(now.getUTCDate() - i);
-
-      const progress = (days - i) / days;
-      const trend = 0.7 + 0.6 * progress; // gentle upward drift
-      const weekly = 1 + 0.18 * Math.sin((i / 7) * Math.PI * 2);
-      const noise = 0.85 + rng() * 0.3;
-      points.push({
-        date: date.toISOString().slice(0, 10),
-        value: Math.round(daily * trend * weekly * noise),
-      });
-    }
-    return delay(provenance(points));
+  getTimeseries(range: TimeRange): Promise<Provenanced<TimeseriesResult>> {
+    return delay(
+      provenance<TimeseriesResult>({
+        label: "Bridging volume",
+        format: "currency",
+        points: buildTimeseries(range, BASE_VALUES.volume24h!, 1337),
+      }),
+    );
   },
 
-  getTopRoutes(limit = 6) {
-    const rows: TopRouteRow[] = [
-      { fromChain: "Ethereum", toChain: "Arbitrum", volumeUsd: 0, sharePct: 18.4 },
-      { fromChain: "Ethereum", toChain: "Base", volumeUsd: 0, sharePct: 15.1 },
-      { fromChain: "Arbitrum", toChain: "Ethereum", volumeUsd: 0, sharePct: 11.7 },
-      { fromChain: "Polygon", toChain: "Ethereum", volumeUsd: 0, sharePct: 9.3 },
-      { fromChain: "Base", toChain: "Optimism", volumeUsd: 0, sharePct: 7.8 },
-      { fromChain: "BNB Chain", toChain: "Ethereum", volumeUsd: 0, sharePct: 6.2 },
-      { fromChain: "Optimism", toChain: "Base", volumeUsd: 0, sharePct: 5.1 },
-      { fromChain: "Avalanche", toChain: "Arbitrum", volumeUsd: 0, sharePct: 4.4 },
-    ].slice(0, limit);
+  getBreakdowns(): Promise<Provenanced<Breakdown[]>> {
+    const routes = withShares(
+      [
+        { label: "Ethereum → Arbitrum", sharePct: 18.4 },
+        { label: "Ethereum → Base", sharePct: 15.1 },
+        { label: "Arbitrum → Ethereum", sharePct: 11.7 },
+        { label: "Polygon → Ethereum", sharePct: 9.3 },
+        { label: "Base → Optimism", sharePct: 7.8 },
+        { label: "BNB Chain → Ethereum", sharePct: 6.2 },
+      ],
+      MONTHLY_VOLUME,
+    );
+    const chains = withShares(
+      [
+        { label: "Ethereum", sharePct: 34.2 },
+        { label: "Arbitrum", sharePct: 19.6 },
+        { label: "Base", sharePct: 14.1 },
+        { label: "Polygon", sharePct: 10.3 },
+        { label: "Optimism", sharePct: 8.7 },
+        { label: "BNB Chain", sharePct: 6.4 },
+      ],
+      MONTHLY_VOLUME,
+    );
 
-    const total = BASE_VALUES.volume30d;
-    for (const row of rows) row.volumeUsd = Math.round((row.sharePct / 100) * total);
-    return delay(provenance(rows));
-  },
-
-  getTopChains(limit = 6) {
-    const rows: TopChainRow[] = [
-      { chain: "Ethereum", volumeUsd: 0, sharePct: 34.2 },
-      { chain: "Arbitrum", volumeUsd: 0, sharePct: 19.6 },
-      { chain: "Base", volumeUsd: 0, sharePct: 14.1 },
-      { chain: "Polygon", volumeUsd: 0, sharePct: 10.3 },
-      { chain: "Optimism", volumeUsd: 0, sharePct: 8.7 },
-      { chain: "BNB Chain", volumeUsd: 0, sharePct: 6.4 },
-      { chain: "Avalanche", volumeUsd: 0, sharePct: 4.2 },
-    ].slice(0, limit);
-
-    const total = BASE_VALUES.volume30d;
-    for (const row of rows) row.volumeUsd = Math.round((row.sharePct / 100) * total);
-    return delay(provenance(rows));
+    return delay(
+      provenance<Breakdown[]>([
+        {
+          id: "top-routes",
+          title: "Top routes",
+          valueHeader: "Volume (30d)",
+          rows: routes,
+        },
+        {
+          id: "top-chains",
+          title: "Top source chains",
+          valueHeader: "Volume (30d)",
+          rows: chains,
+        },
+      ]),
+    );
   },
 };

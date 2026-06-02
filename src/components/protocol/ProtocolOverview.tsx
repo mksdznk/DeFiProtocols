@@ -3,8 +3,13 @@ import {
   ArrowLeftRight,
   Cable,
   Check,
+  Coins,
+  HandCoins,
+  Landmark,
+  PiggyBank,
   Route,
   Wallet,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import type { ProtocolConfig } from "@/protocols/types";
@@ -19,6 +24,11 @@ const SERVICE_ICONS: Record<string, LucideIcon> = {
   Route,
   Activity,
   Wallet,
+  Coins,
+  HandCoins,
+  Landmark,
+  PiggyBank,
+  Zap,
 };
 
 export function ProtocolOverview({

@@ -34,6 +34,33 @@ export const METRIC_META: Record<MetricKey, MetricMeta> = {
     format: "percent",
     hint: "Share of routes that complete successfully.",
   },
+  totalValueLocked: {
+    label: "Total value locked",
+    format: "currency",
+    hint: "Total USD value of assets deposited in the protocol.",
+  },
+  totalSupplied: {
+    label: "Total supplied",
+    format: "currency",
+    hint: "USD value of all assets supplied by lenders.",
+  },
+  totalBorrowed: {
+    label: "Total borrowed",
+    format: "currency",
+    hint: "USD value of all outstanding borrows.",
+  },
+  availableLiquidity: { label: "Available liquidity", format: "currency" },
+  activeMarkets: {
+    label: "Active markets",
+    format: "number",
+    hint: "Number of deployments/markets across chains.",
+  },
+  supportedAssets: { label: "Supported assets", format: "number" },
+  utilizationRate: {
+    label: "Utilization rate",
+    format: "percent",
+    hint: "Share of supplied liquidity currently borrowed.",
+  },
 };
 
 /** Format a raw metric value for display. */

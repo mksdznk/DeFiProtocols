@@ -1,5 +1,6 @@
 import type { ProtocolConfig } from "./types";
 import { lifiConfig } from "./lifi/config";
+import { aaveConfig } from "./aave/config";
 
 /**
  * The protocol registry — the single place a protocol is registered.
@@ -10,6 +11,7 @@ import { lifiConfig } from "./lifi/config";
  */
 const registry: Record<string, ProtocolConfig> = {
   [lifiConfig.slug]: lifiConfig,
+  [aaveConfig.slug]: aaveConfig,
 };
 
 export function getProtocol(slug: string): ProtocolConfig | undefined {

@@ -21,28 +21,19 @@ export function useMetrics(slug: string, keys: MetricKey[]) {
   });
 }
 
-export function useVolumeSeries(slug: string, range: TimeRange) {
+export function useTimeseries(slug: string, range: TimeRange) {
   return useQuery({
-    queryKey: ["analytics", slug, "volume", range],
-    queryFn: () => getAnalyticsAdapter(slug)!.getVolumeSeries(range),
+    queryKey: ["analytics", slug, "timeseries", range],
+    queryFn: () => getAnalyticsAdapter(slug)!.getTimeseries(range),
     enabled: Boolean(getAnalyticsAdapter(slug)),
     staleTime: STALE_TIME,
   });
 }
 
-export function useTopRoutes(slug: string, limit?: number) {
+export function useBreakdowns(slug: string) {
   return useQuery({
-    queryKey: ["analytics", slug, "top-routes", limit],
-    queryFn: () => getAnalyticsAdapter(slug)!.getTopRoutes(limit),
-    enabled: Boolean(getAnalyticsAdapter(slug)),
-    staleTime: STALE_TIME,
-  });
-}
-
-export function useTopChains(slug: string, limit?: number) {
-  return useQuery({
-    queryKey: ["analytics", slug, "top-chains", limit],
-    queryFn: () => getAnalyticsAdapter(slug)!.getTopChains(limit),
+    queryKey: ["analytics", slug, "breakdowns"],
+    queryFn: () => getAnalyticsAdapter(slug)!.getBreakdowns(),
     enabled: Boolean(getAnalyticsAdapter(slug)),
     staleTime: STALE_TIME,
   });

@@ -2,18 +2,14 @@
 
 import { useState } from "react";
 import type { ProtocolConfig } from "@/protocols/types";
-import type { TimeRange } from "@/lib/analytics/types";
+import type { Breakdown, TimeRange } from "@/lib/analytics/types";
 import { formatMetricValue } from "@/lib/analytics/metrics-meta";
-import {
-  useTopChains,
-  useTopRoutes,
-  useVolumeSeries,
-} from "@/hooks/useAnalytics";
+import { useBreakdowns, useTimeseries } from "@/hooks/useAnalytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ProtocolSection } from "./ProtocolSection";
-import { VolumeChart } from "./VolumeChart";
+import { TrendChart } from "./TrendChart";
 import { DataProvenanceBadge } from "./DataProvenanceBadge";
 
 const RANGES: { value: TimeRange; label: string }[] = [
@@ -42,29 +38,34 @@ export function ProtocolAnalytics({
   const { slug, name } = config;
   const [range, setRange] = useState<TimeRange>("30d");
 
-  const volume = useVolumeSeries(slug, range);
-  const routes = useTopRoutes(slug);
-  const chains = useTopChains(slug);
+  const series = useTimeseries(slug, range);
+  const breakdowns = useBreakdowns(slug);
 
-  const provenance = volume.data ?? routes.data ?? chains.data;
+  const provenance = series.data ?? breakdowns.data;
 
   return (
     <ProtocolSection
       id={id}
       title={title}
-      description={`Usage, volume, and routing trends for ${name}.`}
+      description={`Usage and on-chain trends for ${name}.`}
       headerAside={provenance && <DataProvenanceBadge provenance={provenance} />}
     >
       <Card className="bg-card/60">
         <CardHeader className="flex flex-row items-center justify-between gap-4 space-y-0">
-          <CardTitle className="text-base font-medium">Bridging volume</CardTitle>
+          <CardTitle className="text-base font-medium">
+            {series.data?.data.label ?? "Trend"}
+          </CardTitle>
           <RangeTabs range={range} onChange={setRange} />
         </CardHeader>
         <CardContent>
-          {volume.isPending ? (
+          {series.isPending ? (
             <Skeleton className="h-64 w-full" />
-          ) : volume.data ? (
-            <VolumeChart points={volume.data.data} rangeLabel={RANGE_LONG[range]} />
+          ) : series.data ? (
+            <TrendChart
+              points={series.data.data.points}
+              format={series.data.data.format}
+              ariaLabel={`${series.data.data.label} over the ${RANGE_LONG[range]}. Sample data.`}
+            />
           ) : (
             <EmptyState />
           )}
@@ -72,84 +73,55 @@ export function ProtocolAnalytics({
       </Card>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <Card className="bg-card/60">
-          <CardHeader>
-            <CardTitle className="text-base font-medium">Top routes</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {routes.isPending ? (
-              <RowsSkeleton />
-            ) : routes.data ? (
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs text-muted-foreground">
-                    <th className="pb-2 font-medium">Route</th>
-                    <th className="pb-2 text-right font-medium">Volume (30d)</th>
-                    <th className="pb-2 text-right font-medium">Share</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {routes.data.data.map((row) => (
-                    <tr
-                      key={`${row.fromChain}-${row.toChain}`}
-                      className="border-t border-border/60"
-                    >
-                      <td className="py-2">
-                        {row.fromChain}{" "}
-                        <span className="text-muted-foreground" aria-label="to">
-                          →
-                        </span>{" "}
-                        {row.toChain}
-                      </td>
-                      <td className="py-2 text-right font-mono tabular-nums">
-                        {formatMetricValue(row.volumeUsd, "currency")}
-                      </td>
-                      <td className="py-2 text-right font-mono tabular-nums text-muted-foreground">
-                        {row.sharePct.toFixed(1)}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <EmptyState />
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-card/60">
-          <CardHeader>
-            <CardTitle className="text-base font-medium">
-              Top source chains
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {chains.isPending ? (
-              <RowsSkeleton />
-            ) : chains.data ? (
-              <ul className="space-y-2.5">
-                {chains.data.data.map((row) => (
-                  <li key={row.chain} className="space-y-1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{row.chain}</span>
-                      <span className="font-mono tabular-nums text-muted-foreground">
-                        {row.sharePct.toFixed(1)}%
-                      </span>
-                    </div>
-                    <ShareBar
-                      pct={row.sharePct}
-                      max={chains.data.data[0].sharePct}
-                    />
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <EmptyState />
-            )}
-          </CardContent>
-        </Card>
+        {breakdowns.isPending
+          ? [0, 1].map((i) => (
+              <Card key={i} className="bg-card/60">
+                <CardContent className="py-6">
+                  <RowsSkeleton />
+                </CardContent>
+              </Card>
+            ))
+          : breakdowns.data?.data.map((breakdown) => (
+              <BreakdownTable key={breakdown.id} breakdown={breakdown} />
+            ))}
       </div>
     </ProtocolSection>
+  );
+}
+
+function BreakdownTable({ breakdown }: { breakdown: Breakdown }) {
+  return (
+    <Card className="bg-card/60">
+      <CardHeader>
+        <CardTitle className="text-base font-medium">{breakdown.title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-xs text-muted-foreground">
+              <th className="pb-2 font-medium">Name</th>
+              <th className="pb-2 text-right font-medium">
+                {breakdown.valueHeader}
+              </th>
+              <th className="pb-2 text-right font-medium">Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            {breakdown.rows.map((row) => (
+              <tr key={row.label} className="border-t border-border/60">
+                <td className="py-2">{row.label}</td>
+                <td className="py-2 text-right font-mono tabular-nums">
+                  {formatMetricValue(row.valueUsd, "currency")}
+                </td>
+                <td className="py-2 text-right font-mono tabular-nums text-muted-foreground">
+                  {row.sharePct.toFixed(1)}%
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -186,17 +158,6 @@ function RangeTabs({
           </button>
         );
       })}
-    </div>
-  );
-}
-
-function ShareBar({ pct, max }: { pct: number; max: number }) {
-  return (
-    <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-      <div
-        className="h-full rounded-full bg-protocol/70"
-        style={{ width: `${Math.max(4, (pct / max) * 100)}%` }}
-      />
     </div>
   );
 }

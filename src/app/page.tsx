@@ -1,15 +1,19 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { getAllProtocols } from "@/protocols/registry";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
+  const protocols = getAllProtocols();
+
   return (
     <main
       id="main-content"
       tabIndex={-1}
-      className="mx-auto flex min-h-dvh max-w-3xl flex-col items-center justify-center gap-8 px-6 text-center outline-none"
+      className="mx-auto max-w-5xl px-6 py-16 outline-none sm:py-24"
     >
-      <div className="space-y-4">
+      <div className="mx-auto max-w-2xl space-y-4 text-center">
         <p className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
           DeFi Protocol Hub
         </p>
@@ -18,16 +22,61 @@ export default function Home() {
         </h1>
         <p className="text-balance text-lg text-muted-foreground">
           Learn how leading protocols work, dig into their analytics, and
-          interact with them directly. Starting with LiFi cross-chain swaps and
-          bridging.
+          interact with them directly — all in one place.
         </p>
       </div>
-      <Button asChild size="lg">
-        <Link href="/protocols/lifi">
-          Open LiFi
-          <ArrowRight className="size-4" />
-        </Link>
-      </Button>
+
+      <ul className="mt-12 grid gap-4 sm:grid-cols-2">
+        {protocols.map((protocol) => {
+          const accentStyle = {
+            "--protocol-accent": protocol.branding.accent,
+            "--protocol-accent-foreground":
+              protocol.branding.accentForeground ?? "white",
+          } as CSSProperties;
+
+          return (
+            <li key={protocol.slug} style={accentStyle}>
+              <Link
+                href={`/protocols/${protocol.slug}`}
+                className="focus-visible:ring-ring group block rounded-xl focus-visible:ring-2 focus-visible:outline-none"
+              >
+                <Card className="h-full bg-card/60 transition-colors group-hover:border-protocol/50">
+                  <CardContent className="flex h-full flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="flex size-11 items-center justify-center rounded-xl text-lg font-semibold"
+                        style={{
+                          backgroundColor: "var(--protocol-accent)",
+                          color: "var(--protocol-accent-foreground)",
+                        }}
+                        aria-hidden
+                      >
+                        {protocol.branding.monogram}
+                      </span>
+                      <div>
+                        <h2 className="font-semibold">{protocol.name}</h2>
+                        <p className="text-xs text-muted-foreground">
+                          {protocol.category}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {protocol.tagline}
+                    </p>
+                    <span className="mt-auto inline-flex items-center gap-1 text-sm font-medium text-protocol">
+                      Explore
+                      <ArrowRight
+                        className="size-4 transition-transform group-hover:translate-x-0.5"
+                        aria-hidden
+                      />
+                    </span>
+                  </CardContent>
+                </Card>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </main>
   );
 }

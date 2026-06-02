@@ -125,6 +125,7 @@ export interface ProtocolResources {
 export type InteractionConfig =
   | { kind: "lifi-widget" }
   | { kind: "custom"; component: string }
+  | { kind: "external"; url: string; label: string; note?: string }
   | { kind: "none" };
 
 export interface ProtocolConfig {
