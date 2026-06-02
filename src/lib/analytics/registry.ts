@@ -1,6 +1,7 @@
 import type { AnalyticsAdapter } from "./types";
 import { lifiAnalyticsAdapter } from "@/protocols/lifi/analytics.adapter";
 import { aaveAnalyticsAdapter } from "@/protocols/aave/analytics.adapter";
+import { compoundAnalyticsAdapter } from "@/protocols/compound/analytics.adapter";
 
 /**
  * Maps a protocol slug to its analytics adapter. A protocol opts into analytics
@@ -10,6 +11,7 @@ import { aaveAnalyticsAdapter } from "@/protocols/aave/analytics.adapter";
 const adapters: Record<string, AnalyticsAdapter> = {
   lifi: lifiAnalyticsAdapter,
   aave: aaveAnalyticsAdapter,
+  compound: compoundAnalyticsAdapter,
 };
 
 export function getAnalyticsAdapter(slug: string): AnalyticsAdapter | undefined {

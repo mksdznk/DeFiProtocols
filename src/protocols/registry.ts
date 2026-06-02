@@ -1,6 +1,7 @@
 import type { ProtocolConfig } from "./types";
 import { lifiConfig } from "./lifi/config";
 import { aaveConfig } from "./aave/config";
+import { compoundConfig } from "./compound/config";
 
 /**
  * The protocol registry — the single place a protocol is registered.
@@ -12,6 +13,7 @@ import { aaveConfig } from "./aave/config";
 const registry: Record<string, ProtocolConfig> = {
   [lifiConfig.slug]: lifiConfig,
   [aaveConfig.slug]: aaveConfig,
+  [compoundConfig.slug]: compoundConfig,
 };
 
 export function getProtocol(slug: string): ProtocolConfig | undefined {
