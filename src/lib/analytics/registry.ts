@@ -5,6 +5,7 @@ import { compoundAnalyticsAdapter } from "@/protocols/compound/analytics.adapter
 import { curveAnalyticsAdapter } from "@/protocols/curve/analytics.adapter";
 import { maverickAnalyticsAdapter } from "@/protocols/maverick/analytics.adapter";
 import { lidoAnalyticsAdapter } from "@/protocols/lido/analytics.adapter";
+import { backedAnalyticsAdapter } from "@/protocols/backed/analytics.adapter";
 
 /**
  * Maps a protocol slug to its analytics adapter. A protocol opts into analytics
@@ -18,6 +19,7 @@ const adapters: Record<string, AnalyticsAdapter> = {
   curve: curveAnalyticsAdapter,
   maverick: maverickAnalyticsAdapter,
   lido: lidoAnalyticsAdapter,
+  backed: backedAnalyticsAdapter,
 };
 
 export function getAnalyticsAdapter(slug: string): AnalyticsAdapter | undefined {

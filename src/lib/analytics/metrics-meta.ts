@@ -76,6 +76,26 @@ export const METRIC_META: Record<MetricKey, MetricMeta> = {
     format: "percent",
     hint: "Share of all staked ETH held through this protocol.",
   },
+  assetsUnderManagement: {
+    label: "Assets under management",
+    format: "currency",
+    hint: "Total value of tokenized real-world assets outstanding.",
+  },
+  tokenizedProducts: {
+    label: "Tokenized products",
+    format: "number",
+    hint: "Number of distinct tokenized products issued.",
+  },
+  totalHolders: {
+    label: "Token holders",
+    format: "compact",
+    hint: "Number of addresses holding the protocol's tokens.",
+  },
+  collateralization: {
+    label: "Collateralization",
+    format: "percent",
+    hint: "Share of issued tokens backed 1:1 by the underlying assets.",
+  },
 };
 
 /** Format a raw metric value for display. */

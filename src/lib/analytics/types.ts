@@ -42,7 +42,12 @@ export type MetricKey =
   // Liquid staking
   | "stakingApr"
   | "totalStakers"
-  | "marketShare";
+  | "marketShare"
+  // Tokenized real-world assets (RWA)
+  | "assetsUnderManagement"
+  | "tokenizedProducts"
+  | "totalHolders"
+  | "collateralization";
 
 export type MetricFormat =
   | "currency"
