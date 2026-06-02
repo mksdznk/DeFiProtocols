@@ -3,6 +3,7 @@ import { lifiConfig } from "./lifi/config";
 import { aaveConfig } from "./aave/config";
 import { compoundConfig } from "./compound/config";
 import { curveConfig } from "./curve/config";
+import { maverickConfig } from "./maverick/config";
 
 /**
  * The protocol registry — the single place a protocol is registered.
@@ -16,6 +17,7 @@ const registry: Record<string, ProtocolConfig> = {
   [aaveConfig.slug]: aaveConfig,
   [compoundConfig.slug]: compoundConfig,
   [curveConfig.slug]: curveConfig,
+  [maverickConfig.slug]: maverickConfig,
 };
 
 export function getProtocol(slug: string): ProtocolConfig | undefined {
