@@ -24,7 +24,7 @@ export function ProtocolSecurity({
         <Card className="bg-card/60">
           <CardContent className="space-y-3">
             <h3 className="flex items-center gap-2 font-medium">
-              <FileCheck2 className="size-4 text-[var(--protocol-accent)]" aria-hidden />
+              <FileCheck2 className="size-4 text-protocol" aria-hidden />
               Audits
             </h3>
             <ul className="space-y-2">
@@ -47,7 +47,7 @@ export function ProtocolSecurity({
                       href={audit.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-[var(--protocol-accent)]"
+                      className="inline-flex items-center gap-1 text-muted-foreground hover:text-protocol"
                     >
                       View
                       <ExternalLink className="size-3" aria-hidden />
@@ -64,7 +64,7 @@ export function ProtocolSecurity({
             <CardContent className="space-y-3">
               <h3 className="flex items-center gap-2 font-medium">
                 <ShieldCheck
-                  className="size-4 text-[var(--protocol-accent)]"
+                  className="size-4 text-protocol"
                   aria-hidden
                 />
                 Bug bounty
@@ -80,7 +80,7 @@ export function ProtocolSecurity({
                 href={security.bugBounty.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-[var(--protocol-accent)]"
+                className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-protocol"
               >
                 View program
                 <ExternalLink className="size-3" aria-hidden />

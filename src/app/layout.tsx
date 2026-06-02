@@ -42,6 +42,12 @@ export default function RootLayout({
     >
       <body className="min-h-dvh bg-background font-sans text-foreground antialiased">
         <Providers>
+          <a
+            href="#main-content"
+            className="focus:bg-background focus:text-foreground focus:ring-ring sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:px-4 focus:py-2 focus:ring-2 focus:not-sr-only"
+          >
+            Skip to content
+          </a>
           <SiteHeader />
           {children}
         </Providers>

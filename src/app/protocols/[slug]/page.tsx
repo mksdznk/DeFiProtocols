@@ -4,6 +4,11 @@ import { notFound } from "next/navigation";
 import { getAllProtocolSlugs, getProtocol } from "@/protocols/registry";
 import { ProtocolHeader } from "@/components/protocol/ProtocolHeader";
 import { ProtocolSectionRenderer } from "@/components/protocol/ProtocolSectionRenderer";
+import { SectionNav } from "@/components/protocol/SectionNav";
+import { getProtocolNavItems } from "@/components/protocol/section-registry";
+import { buildProtocolJsonLd, serializeJsonLd } from "@/lib/seo";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 type PageParams = { params: Promise<{ slug: string }> };
 
@@ -43,10 +48,18 @@ export default async function ProtocolPage({ params }: PageParams) {
       config.branding.accentForeground ?? "white",
   } as CSSProperties;
 
+  const navItems = getProtocolNavItems(config);
+  const jsonLd = buildProtocolJsonLd(config, `${SITE_URL}/protocols/${slug}`);
+
   return (
-    <main style={accentStyle}>
+    <main id="main-content" tabIndex={-1} style={accentStyle} className="outline-none">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
+      />
       <ProtocolHeader config={config} />
       <div className="mx-auto max-w-6xl px-6 pb-20">
+        <SectionNav items={navItems} />
         <ProtocolSectionRenderer config={config} />
       </div>
     </main>

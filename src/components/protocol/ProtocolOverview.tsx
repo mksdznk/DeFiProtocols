@@ -44,7 +44,7 @@ export function ProtocolOverview({
               {overview.highlights.map((highlight) => (
                 <li key={highlight} className="flex items-start gap-2 text-sm">
                   <Check
-                    className="mt-0.5 size-4 shrink-0 text-[var(--protocol-accent)]"
+                    className="mt-0.5 size-4 shrink-0 text-protocol"
                     aria-hidden
                   />
                   <span>{highlight}</span>
@@ -90,7 +90,7 @@ export function ProtocolOverview({
           return (
             <Card key={service.title} className="bg-card/60">
               <CardContent className="space-y-3">
-                <span className="inline-flex size-9 items-center justify-center rounded-md bg-[var(--protocol-accent)]/12 text-[var(--protocol-accent)]">
+                <span className="inline-flex size-9 items-center justify-center rounded-md bg-protocol/12 text-protocol">
                   <Icon className="size-5" aria-hidden />
                 </span>
                 <h3 className="font-medium">{service.title}</h3>

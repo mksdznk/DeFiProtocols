@@ -23,7 +23,7 @@ function VideoCard({ video }: { video: VideoResource }) {
       rel="noopener noreferrer"
       className="group focus-visible:ring-ring rounded-xl focus-visible:ring-2 focus-visible:outline-none"
     >
-      <Card className="h-full overflow-hidden bg-card/60 transition-colors group-hover:border-[var(--protocol-accent)]/50">
+      <Card className="h-full overflow-hidden bg-card/60 transition-colors group-hover:border-protocol/50">
         <div className="flex aspect-video items-center justify-center bg-muted/50">
           {video.thumbnailUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -34,7 +34,7 @@ function VideoCard({ video }: { video: VideoResource }) {
             />
           ) : (
             <PlayCircle
-              className="size-10 text-muted-foreground/60 transition-colors group-hover:text-[var(--protocol-accent)]"
+              className="size-10 text-muted-foreground/60 transition-colors group-hover:text-protocol"
               aria-hidden
             />
           )}
@@ -64,7 +64,7 @@ function ArticleRow({ article }: { article: ArticleResource }) {
       href={article.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group focus-visible:ring-ring flex items-start gap-3 rounded-lg border border-border/60 bg-card/40 p-4 transition-colors hover:border-[var(--protocol-accent)]/50 focus-visible:ring-2 focus-visible:outline-none"
+      className="group focus-visible:ring-ring flex items-start gap-3 rounded-lg border border-border/60 bg-card/40 p-4 transition-colors hover:border-protocol/50 focus-visible:ring-2 focus-visible:outline-none"
     >
       <BookOpen
         className="mt-0.5 size-4 shrink-0 text-muted-foreground"

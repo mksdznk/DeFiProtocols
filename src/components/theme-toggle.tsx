@@ -1,35 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Theme toggle. Both icons are always in the DOM and shown/hidden via the
+ * `dark:` variant (driven by the `.dark` class next-themes sets before
+ * hydration), so there's no mount-gating effect and no hydration mismatch.
+ */
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Avoid hydration mismatch: theme is only known on the client.
-  useEffect(() => setMounted(true), []);
-
-  const isDark = resolvedTheme === "dark";
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      aria-label={mounted ? `Switch to ${isDark ? "light" : "dark"} theme` : "Toggle theme"}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label="Toggle theme"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {mounted ? (
-        isDark ? (
-          <Sun className="size-4" aria-hidden />
-        ) : (
-          <Moon className="size-4" aria-hidden />
-        )
-      ) : (
-        <Sun className="size-4 opacity-0" aria-hidden />
-      )}
+      <Sun className="hidden size-4 dark:block" aria-hidden />
+      <Moon className="block size-4 dark:hidden" aria-hidden />
     </Button>
   );
 }

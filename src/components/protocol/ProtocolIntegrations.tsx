@@ -47,7 +47,7 @@ export function ProtocolIntegrations({
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-sm hover:text-[var(--protocol-accent)]"
+                        className="inline-flex items-center gap-1.5 text-sm hover:text-protocol"
                       >
                         {item.name}
                         <ExternalLink className="size-3 opacity-60" aria-hidden />
