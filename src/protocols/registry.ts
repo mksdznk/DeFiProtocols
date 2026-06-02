@@ -4,6 +4,7 @@ import { aaveConfig } from "./aave/config";
 import { compoundConfig } from "./compound/config";
 import { curveConfig } from "./curve/config";
 import { maverickConfig } from "./maverick/config";
+import { lidoConfig } from "./lido/config";
 
 /**
  * The protocol registry — the single place a protocol is registered.
@@ -18,6 +19,7 @@ const registry: Record<string, ProtocolConfig> = {
   [compoundConfig.slug]: compoundConfig,
   [curveConfig.slug]: curveConfig,
   [maverickConfig.slug]: maverickConfig,
+  [lidoConfig.slug]: lidoConfig,
 };
 
 export function getProtocol(slug: string): ProtocolConfig | undefined {

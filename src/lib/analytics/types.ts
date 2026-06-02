@@ -38,7 +38,11 @@ export type MetricKey =
   | "availableLiquidity"
   | "activeMarkets"
   | "supportedAssets"
-  | "utilizationRate";
+  | "utilizationRate"
+  // Liquid staking
+  | "stakingApr"
+  | "totalStakers"
+  | "marketShare";
 
 export type MetricFormat =
   | "currency"

@@ -61,6 +61,21 @@ export const METRIC_META: Record<MetricKey, MetricMeta> = {
     format: "percent",
     hint: "Share of supplied liquidity currently borrowed.",
   },
+  stakingApr: {
+    label: "Staking APR",
+    format: "percent",
+    hint: "Annualized staking reward rate.",
+  },
+  totalStakers: {
+    label: "Total stakers",
+    format: "compact",
+    hint: "Number of unique staking addresses.",
+  },
+  marketShare: {
+    label: "Market share",
+    format: "percent",
+    hint: "Share of all staked ETH held through this protocol.",
+  },
 };
 
 /** Format a raw metric value for display. */
