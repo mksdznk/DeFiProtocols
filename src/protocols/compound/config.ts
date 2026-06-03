@@ -17,6 +17,7 @@ export const compoundConfig: ProtocolConfig = {
   tagline: "Earn interest and borrow assets through an algorithmic money market.",
   category: "Lending & borrowing money market",
   branding: {
+    logoSrc: "/images/compound-logo.png",
     monogram: "Co",
     // Compound green.
     accent: "oklch(0.76 0.15 165)",

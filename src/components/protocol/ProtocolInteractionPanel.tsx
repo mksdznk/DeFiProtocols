@@ -3,6 +3,7 @@ import type { ProtocolConfig } from "@/protocols/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LiFiWidgetWrapper } from "@/components/lifi/LiFiWidgetWrapper";
+import { ProtocolLogo } from "./ProtocolLogo";
 import { ProtocolSection } from "./ProtocolSection";
 
 /**
@@ -34,16 +35,7 @@ export function ProtocolInteractionPanel({
       {interaction.kind === "external" && (
         <Card className="mx-auto max-w-md bg-card/60">
           <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-            <span
-              className="flex size-12 items-center justify-center rounded-xl text-lg font-semibold"
-              style={{
-                backgroundColor: "var(--protocol-accent)",
-                color: "var(--protocol-accent-foreground)",
-              }}
-              aria-hidden
-            >
-              {config.branding.monogram}
-            </span>
+            <ProtocolLogo branding={config.branding} className="size-12 text-lg" />
             <p className="text-sm text-muted-foreground">
               {interaction.note ??
                 `${config.name} is used through its official app. You stay in control of your wallet and funds.`}

@@ -19,6 +19,7 @@ export const curveConfig: ProtocolConfig = {
   tagline: "Low-slippage swaps and deep liquidity for stablecoins and pegged assets.",
   category: "Stableswap AMM & DEX",
   branding: {
+    logoSrc: "/images/curve-logo.png",
     monogram: "Cr",
     // Curve blue.
     accent: "oklch(0.58 0.18 255)",

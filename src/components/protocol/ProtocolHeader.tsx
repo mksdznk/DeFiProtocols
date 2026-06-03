@@ -3,6 +3,7 @@ import { ArrowUpRight, AtSign, BookText, Code, Globe } from "lucide-react";
 import type { ProtocolConfig } from "@/protocols/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProtocolLogo } from "./ProtocolLogo";
 
 const LINK_META: {
   key: keyof ProtocolConfig["links"];
@@ -36,16 +37,7 @@ export function ProtocolHeader({ config }: { config: ProtocolConfig }) {
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="flex items-start gap-4">
-            <span
-              className="flex size-14 shrink-0 items-center justify-center rounded-xl text-xl font-semibold"
-              style={{
-                backgroundColor: "var(--protocol-accent)",
-                color: branding.accentForeground ?? "white",
-              }}
-              aria-hidden
-            >
-              {branding.monogram}
-            </span>
+            <ProtocolLogo branding={branding} className="size-14 text-xl" />
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-semibold tracking-tight">

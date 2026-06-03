@@ -18,6 +18,7 @@ export const aaveConfig: ProtocolConfig = {
   tagline: "Earn yield and borrow against your crypto, non-custodially.",
   category: "Lending & borrowing money market",
   branding: {
+    logoSrc: "/images/aave-logo.png",
     monogram: "Aa",
     // Aave violet.
     accent: "oklch(0.62 0.19 295)",

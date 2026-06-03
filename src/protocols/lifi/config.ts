@@ -15,6 +15,7 @@ export const lifiConfig: ProtocolConfig = {
   tagline: "Any-to-any cross-chain swaps and bridging, aggregated.",
   category: "Cross-chain liquidity & messaging aggregator",
   branding: {
+    logoSrc: "/images/lifi-logo.png",
     monogram: "Li",
     // LI.FI brand orange/red.
     accent: "oklch(0.66 0.2 28)",

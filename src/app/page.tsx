@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllProtocols } from "@/protocols/registry";
 import { Card, CardContent } from "@/components/ui/card";
+import { ProtocolLogo } from "@/components/protocol/ProtocolLogo";
 
 export default function Home() {
   const protocols = getAllProtocols();
@@ -43,16 +44,10 @@ export default function Home() {
                 <Card className="h-full bg-card/60 transition-colors group-hover:border-protocol/50">
                   <CardContent className="flex h-full flex-col gap-4">
                     <div className="flex items-center gap-3">
-                      <span
-                        className="flex size-11 items-center justify-center rounded-xl text-lg font-semibold"
-                        style={{
-                          backgroundColor: "var(--protocol-accent)",
-                          color: "var(--protocol-accent-foreground)",
-                        }}
-                        aria-hidden
-                      >
-                        {protocol.branding.monogram}
-                      </span>
+                      <ProtocolLogo
+                        branding={protocol.branding}
+                        className="size-11 text-lg"
+                      />
                       <div>
                         <h2 className="font-semibold">{protocol.name}</h2>
                         <p className="text-xs text-muted-foreground">

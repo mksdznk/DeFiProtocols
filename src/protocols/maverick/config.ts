@@ -18,6 +18,7 @@ export const maverickConfig: ProtocolConfig = {
   tagline: "Capital-efficient swaps and directional liquidity with the Maverick AMM.",
   category: "Dynamic Distribution AMM (DEX)",
   branding: {
+    logoSrc: "/images/maverick-logo.png",
     monogram: "Mv",
     // Maverick teal.
     accent: "oklch(0.66 0.13 200)",

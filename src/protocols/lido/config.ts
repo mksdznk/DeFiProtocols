@@ -19,6 +19,7 @@ export const lidoConfig: ProtocolConfig = {
   tagline: "Stake ETH, stay liquid with stETH, and earn staking rewards.",
   category: "Ethereum liquid staking",
   branding: {
+    logoSrc: "/images/lido-logo.png",
     monogram: "Ld",
     // Lido coral/rose.
     accent: "oklch(0.66 0.16 350)",
