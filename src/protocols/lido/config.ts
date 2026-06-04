@@ -31,6 +31,17 @@ export const lidoConfig: ProtocolConfig = {
     twitter: "https://x.com/LidoFinance",
     github: "https://github.com/lidofinance",
   },
+  beginner: {
+    inSimpleTerms:
+      "Lido lets you put your ETH to work earning staking rewards, while giving you a token you can still use anywhere else.",
+    analogy:
+      "It's like a savings jar that pays you over time but still lets you spend whenever you want.",
+    firstSteps: [
+      "Get a wallet with some ETH in it.",
+      "Open the Lido app and connect your wallet.",
+      "Choose how much ETH to stake and confirm.",
+    ],
+  },
   overview: {
     summary:
       "Lido is a liquid staking protocol for Ethereum. Stake ETH and receive stETH — a token that represents your staked ETH plus accruing rewards while staying liquid and usable across DeFi. Staking is non-custodial and delegated to a set of DAO-curated node operators, with LDO governance overseeing the protocol.",
@@ -109,6 +120,7 @@ export const lidoConfig: ProtocolConfig = {
     note: "Stake ETH, wrap/unwrap stETH, and request withdrawals in the official Lido app. Non-custodial — you sign every transaction and keep control of your funds.",
   },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },

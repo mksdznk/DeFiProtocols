@@ -30,6 +30,17 @@ export const aaveConfig: ProtocolConfig = {
     twitter: "https://x.com/aave",
     github: "https://github.com/aave",
   },
+  beginner: {
+    inSimpleTerms:
+      "Aave lets you earn a little extra on crypto you already have, or borrow some by using your crypto as a deposit.",
+    analogy:
+      "It's like a savings account and a loan desk for crypto, run by code instead of a bank.",
+    firstSteps: [
+      "Get a crypto wallet and put some funds in it.",
+      "Open the Aave app and connect your wallet.",
+      "Pick a coin to ‘supply’ to start earning, then confirm in your wallet.",
+    ],
+  },
   overview: {
     summary:
       "Aave is a decentralized, non-custodial liquidity protocol where users supply assets to earn yield or borrow against collateral. Interest rates adjust algorithmically with supply and demand, and every position is held by audited smart contracts — never a company.",
@@ -118,6 +129,7 @@ export const aaveConfig: ProtocolConfig = {
     note: "Supply, borrow, and manage positions in the official Aave app. Non-custodial — you sign every transaction and keep control of your funds.",
   },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },

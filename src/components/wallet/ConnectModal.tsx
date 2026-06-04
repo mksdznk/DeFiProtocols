@@ -53,7 +53,8 @@ export function ConnectModal({
         <DialogHeader>
           <DialogTitle>Connect a wallet</DialogTitle>
           <DialogDescription>
-            Choose a wallet to connect to this app.
+            A wallet is like a secure key for crypto apps. Pick one to connect —
+            it&apos;s free and only takes a few seconds.
           </DialogDescription>
         </DialogHeader>
 
@@ -88,6 +89,19 @@ export function ConnectModal({
             {connectErrorMessage(error)}
           </p>
         )}
+
+        <p className="text-center text-xs text-muted-foreground">
+          Don&apos;t have a wallet yet?{" "}
+          <a
+            href="https://metamask.io/download/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium underline underline-offset-2 hover:text-foreground"
+          >
+            Get MetaMask
+          </a>{" "}
+          — it&apos;s free.
+        </p>
       </DialogContent>
     </Dialog>
   );

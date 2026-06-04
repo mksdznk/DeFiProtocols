@@ -31,6 +31,17 @@ export const curveConfig: ProtocolConfig = {
     twitter: "https://x.com/CurveFinance",
     github: "https://github.com/curvefi",
   },
+  beginner: {
+    inSimpleTerms:
+      "Curve lets you swap similar coins — like different dollar-coins — with very small fees, and earn by adding your coins to a shared pool.",
+    analogy:
+      "It's like a money-exchange booth that's really good at swapping things worth about the same.",
+    firstSteps: [
+      "Connect your wallet.",
+      "Pick the coin you have and the coin you want.",
+      "Make the swap and approve it in your wallet.",
+    ],
+  },
   overview: {
     summary:
       "Curve is a decentralized exchange and automated market maker built for swapping stablecoins and other pegged assets with minimal slippage. Liquidity providers earn trading fees and CRV rewards, while CRV governance (veCRV) and the crvUSD stablecoin round out the ecosystem — all non-custodial.",
@@ -119,6 +130,7 @@ export const curveConfig: ProtocolConfig = {
     note: "Swap, provide liquidity, and manage positions in the official Curve app. Non-custodial — you sign every transaction and keep control of your funds.",
   },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },

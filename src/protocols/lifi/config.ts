@@ -27,6 +27,17 @@ export const lifiConfig: ProtocolConfig = {
     twitter: "https://x.com/lifiprotocol",
     github: "https://github.com/lifinance",
   },
+  beginner: {
+    inSimpleTerms:
+      "LI.FI helps you move your crypto from one network to another, or swap one coin for another, in just a few clicks.",
+    analogy:
+      "It's like sending money between two different apps that don't normally talk to each other.",
+    firstSteps: [
+      "Connect your wallet using the button at the top.",
+      "Choose the coin you have and the coin you want.",
+      "Press the button and approve it in your wallet.",
+    ],
+  },
   overview: {
     summary:
       "LI.FI is a cross-chain liquidity aggregation and messaging protocol. It connects dozens of bridges and decentralized exchanges behind a single interface, then discovers, compares, and executes the best route to swap or move assets between blockchains — non-custodially, from your own wallet.",
@@ -114,8 +125,9 @@ export const lifiConfig: ProtocolConfig = {
     "supportedChains",
     "routeSuccessRate",
   ],
-  interaction: { kind: "lifi-widget" },
+  interaction: { kind: "lifi-sdk" },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },

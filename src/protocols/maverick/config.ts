@@ -30,6 +30,17 @@ export const maverickConfig: ProtocolConfig = {
     twitter: "https://x.com/mavprotocol",
     github: "https://github.com/maverickprotocol",
   },
+  beginner: {
+    inSimpleTerms:
+      "Maverick is a place to swap coins, and to earn by providing coins for other people to trade with.",
+    analogy:
+      "It's like a smart marketplace where the money you add can automatically follow where the trading is happening.",
+    firstSteps: [
+      "Connect your wallet.",
+      "Choose the two coins you want to swap.",
+      "Confirm the swap in your wallet.",
+    ],
+  },
   overview: {
     summary:
       "Maverick is a decentralized exchange powered by a Dynamic Distribution AMM (DDAMM). Its concentrated liquidity can automatically follow the price through directional Liquidity Modes, aiming for higher capital efficiency for both traders and liquidity providers. MAV governance (veMAV) and Boosted Positions direct incentives across the ecosystem — all non-custodial.",
@@ -111,6 +122,7 @@ export const maverickConfig: ProtocolConfig = {
     note: "Swap, provide liquidity, and manage positions in the official Maverick app. Non-custodial — you sign every transaction and keep control of your funds.",
   },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },

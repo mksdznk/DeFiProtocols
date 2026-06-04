@@ -3,6 +3,7 @@ import type { ProtocolConfig } from "@/protocols/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LiFiWidgetWrapper } from "@/components/lifi/LiFiWidgetWrapper";
+import { EasySwapWrapper } from "@/components/lifi/EasySwapWrapper";
 import { ProtocolLogo } from "./ProtocolLogo";
 import { ProtocolSection } from "./ProtocolSection";
 
@@ -24,12 +25,14 @@ export function ProtocolInteractionPanel({
   if (interaction.kind === "none") return null;
 
   const description =
-    interaction.kind === "lifi-widget"
-      ? `Swap and bridge directly through ${config.name}.`
+    interaction.kind === "lifi-sdk" || interaction.kind === "lifi-widget"
+      ? `Swap and bridge in a few simple steps — ${config.name} finds the route for you.`
       : `Use ${config.name} to interact on-chain.`;
 
   return (
     <ProtocolSection id={id} title={title} description={description}>
+      {interaction.kind === "lifi-sdk" && <EasySwapWrapper />}
+
       {interaction.kind === "lifi-widget" && <LiFiWidgetWrapper />}
 
       {interaction.kind === "external" && (

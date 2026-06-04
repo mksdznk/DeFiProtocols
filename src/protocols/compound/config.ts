@@ -29,6 +29,17 @@ export const compoundConfig: ProtocolConfig = {
     twitter: "https://x.com/compoundfinance",
     github: "https://github.com/compound-finance",
   },
+  beginner: {
+    inSimpleTerms:
+      "Compound lets you earn interest by lending out your crypto, or borrow crypto by putting some of your own up as a deposit.",
+    analogy:
+      "It's like a shared money pool: lenders earn a little, borrowers pay a little, and code keeps it fair.",
+    firstSteps: [
+      "Get a wallet with some crypto in it.",
+      "Open the Compound app and connect your wallet.",
+      "Choose a coin to supply and confirm in your wallet.",
+    ],
+  },
   overview: {
     summary:
       "Compound is a decentralized, non-custodial money market protocol. Users supply assets to earn interest or borrow against collateral, with rates set algorithmically by supply and demand. Compound III focuses each market on a single borrowable base asset with a set of collateral assets, for capital efficiency and clearer risk.",
@@ -114,6 +125,7 @@ export const compoundConfig: ProtocolConfig = {
     note: "Supply, borrow, and manage positions in the official Compound app. Non-custodial — you sign every transaction and keep control of your funds.",
   },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },

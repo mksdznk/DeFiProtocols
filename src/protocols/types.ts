@@ -12,6 +12,7 @@ import type { MetricKey } from "@/lib/analytics/types";
 
 /** Identifiers for the section modules the renderer knows how to mount. */
 export type SectionType =
+  | "beginner"
   | "overview"
   | "metrics"
   | "interaction"
@@ -123,10 +124,25 @@ export interface ProtocolResources {
 
 /** Which interaction surface to mount in the Interaction section. */
 export type InteractionConfig =
+  | { kind: "lifi-sdk" }
   | { kind: "lifi-widget" }
   | { kind: "custom"; component: string }
   | { kind: "external"; url: string; label: string; note?: string }
   | { kind: "none" };
+
+/**
+ * Plain-language onboarding for absolute beginners. Authored for someone brand
+ * new to crypto — no jargon — so the protocol page can open with a friendly,
+ * understandable "Start here" instead of dense terminology.
+ */
+export interface BeginnerGuide {
+  /** What it is, in one or two jargon-free sentences. */
+  inSimpleTerms: string;
+  /** A friendly "it's like…" comparison to an everyday thing. */
+  analogy: string;
+  /** A few simple first steps to actually get going. */
+  firstSteps: string[];
+}
 
 export interface ProtocolConfig {
   slug: string;
@@ -137,6 +153,9 @@ export interface ProtocolConfig {
   category: string;
   branding: ProtocolBranding;
   links: ProtocolLinks;
+
+  /** Plain-language intro shown first, for newcomers. */
+  beginner: BeginnerGuide;
 
   overview: {
     /** A few sentences. Plain text (no markdown rendering in v1). */

@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import type { ProtocolConfig, SectionType } from "@/protocols/types";
+import { ProtocolBeginnerGuide } from "./ProtocolBeginnerGuide";
 import { ProtocolOverview } from "./ProtocolOverview";
 import { ProtocolMetrics } from "./ProtocolMetrics";
 import { ProtocolInteractionPanel } from "./ProtocolInteractionPanel";
@@ -28,6 +29,11 @@ interface SectionMeta {
  * Adding a new section type is a single entry here plus its component.
  */
 export const SECTION_REGISTRY: Record<SectionType, SectionMeta> = {
+  beginner: {
+    id: "start",
+    title: "Start here",
+    Component: ProtocolBeginnerGuide,
+  },
   overview: { id: "overview", title: "Overview", Component: ProtocolOverview },
   metrics: { id: "metrics", title: "Key metrics", Component: ProtocolMetrics },
   interaction: {

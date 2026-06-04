@@ -29,6 +29,17 @@ export const backedConfig: ProtocolConfig = {
     twitter: "https://x.com/backed_fi",
     github: "https://github.com/backed-fi",
   },
+  beginner: {
+    inSimpleTerms:
+      "Backed turns real-world things like company shares and bonds into tokens you can hold in a crypto wallet.",
+    analogy:
+      "It's like a digital sticker that's always worth the same as the real thing it stands for.",
+    firstSteps: [
+      "Get a crypto wallet.",
+      "Browse the tokenized products on Backed.",
+      "Buy one on a supported exchange or marketplace.",
+    ],
+  },
   overview: {
     summary:
       "Backed issues tokenized real-world assets: ERC-20 tokens (bTokens) that track real securities — stocks, ETFs, and bonds — each fully collateralized 1:1 by the underlying held with a custodian. Primary minting and redemption are available to eligible participants under a Swiss regulatory framework, while the tokens themselves are permissionlessly transferable and composable across DeFi.",
@@ -109,6 +120,7 @@ export const backedConfig: ProtocolConfig = {
     note: "Browse tokenized products on Backed. Primary minting and redemption are available to eligible participants; bTokens also trade on secondary markets and DEXs.",
   },
   sections: [
+    { type: "beginner" },
     { type: "overview" },
     { type: "metrics" },
     { type: "interaction" },
