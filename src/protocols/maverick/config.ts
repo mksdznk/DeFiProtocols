@@ -21,7 +21,7 @@ export const maverickConfig: ProtocolConfig = {
     logoSrc: "/images/maverick-logo.png",
     monogram: "Mv",
     // Maverick teal.
-    accent: "oklch(0.66 0.13 200)",
+    accent: "oklch(0.4862 0.2682 291.23)",
     accentForeground: "oklch(0.99 0 0)",
   },
   links: {

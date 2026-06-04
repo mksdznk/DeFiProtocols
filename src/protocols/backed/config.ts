@@ -19,8 +19,9 @@ export const backedConfig: ProtocolConfig = {
   category: "Tokenized real-world assets (RWA)",
   branding: {
     monogram: "Bk",
+    logoSrc: "/images/backed-logo.png",
     // Backed amber/gold.
-    accent: "oklch(0.72 0.13 80)",
+    accent: "oklch(0.5599 0.2429 261.16)",
     accentForeground: "oklch(0.22 0.03 80)",
   },
   links: {

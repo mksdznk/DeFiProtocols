@@ -20,7 +20,7 @@ export const compoundConfig: ProtocolConfig = {
     logoSrc: "/images/compound-logo.png",
     monogram: "Co",
     // Compound green.
-    accent: "oklch(0.76 0.15 165)",
+    accent: "oklch(0.767 0.1651 163.27)",
     accentForeground: "oklch(0.21 0.02 165)",
   },
   links: {

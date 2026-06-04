@@ -22,7 +22,7 @@ export const lidoConfig: ProtocolConfig = {
     logoSrc: "/images/lido-logo.png",
     monogram: "Ld",
     // Lido coral/rose.
-    accent: "oklch(0.66 0.16 350)",
+    accent: "oklch(0.7292 0.1216 26.63)",
     accentForeground: "oklch(0.99 0 0)",
   },
   links: {

@@ -18,7 +18,7 @@ export const lifiConfig: ProtocolConfig = {
     logoSrc: "/images/lifi-logo.png",
     monogram: "Li",
     // LI.FI brand orange/red.
-    accent: "oklch(0.66 0.2 28)",
+    accent: "oklch(0.8801 0.0997 321.97)",
     accentForeground: "oklch(0.99 0 0)",
   },
   links: {

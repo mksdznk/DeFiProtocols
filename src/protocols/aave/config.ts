@@ -21,7 +21,7 @@ export const aaveConfig: ProtocolConfig = {
     logoSrc: "/images/aave-logo.png",
     monogram: "Aa",
     // Aave violet.
-    accent: "oklch(0.62 0.19 295)",
+    accent: "oklch(0.702 0.1471 282.82)",
     accentForeground: "oklch(0.99 0 0)",
   },
   links: {
