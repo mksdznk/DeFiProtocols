@@ -122,12 +122,7 @@ export const aaveConfig: ProtocolConfig = {
     "supportedAssets",
     "utilizationRate",
   ],
-  interaction: {
-    kind: "external",
-    url: "https://app.aave.com",
-    label: "Open Aave app",
-    note: "Supply, borrow, and manage positions in the official Aave app. Non-custodial — you sign every transaction and keep control of your funds.",
-  },
+  interaction: { kind: "aave-sdk" },
   sections: [
     { type: "beginner" },
     { type: "overview" },

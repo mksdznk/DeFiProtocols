@@ -125,7 +125,7 @@ export interface ProtocolResources {
 /** Which interaction surface to mount in the Interaction section. */
 export type InteractionConfig =
   | { kind: "lifi-sdk" }
-  | { kind: "lifi-widget" }
+  | { kind: "aave-sdk" }
   | { kind: "custom"; component: string }
   | { kind: "external"; url: string; label: string; note?: string }
   | { kind: "none" };

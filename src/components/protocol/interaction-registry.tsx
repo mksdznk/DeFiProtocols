@@ -4,7 +4,7 @@ import type { InteractionConfig, ProtocolConfig } from "@/protocols/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EasySwapWrapper } from "@/components/lifi/EasySwapWrapper";
-import { LiFiWidgetWrapper } from "@/components/lifi/LiFiWidgetWrapper";
+import { AaveEarnWrapper } from "@/components/aave/AaveEarnWrapper";
 import { ProtocolLogo } from "./ProtocolLogo";
 
 /**
@@ -26,8 +26,8 @@ function EasySwapSurface() {
   return <EasySwapWrapper />;
 }
 
-function WidgetSurface() {
-  return <LiFiWidgetWrapper />;
+function AaveEarnSurface() {
+  return <AaveEarnWrapper />;
 }
 
 // A call-to-action out to a protocol's official app.
@@ -79,6 +79,9 @@ const swapDescribe = (config: ProtocolConfig) =>
 const appDescribe = (config: ProtocolConfig) =>
   `Use ${config.name} to interact on-chain.`;
 
+const earnDescribe = (config: ProtocolConfig) =>
+  `Deposit a coin and start earning with ${config.name} — no jargon, just a few taps.`;
+
 /**
  * A `null` entry means "render no interaction section at all" (e.g. `none`),
  * so the panel needs no special-casing for it.
@@ -88,7 +91,7 @@ export const INTERACTION_SURFACES: Record<
   InteractionSurface | null
 > = {
   "lifi-sdk": { Component: EasySwapSurface, describe: swapDescribe },
-  "lifi-widget": { Component: WidgetSurface, describe: swapDescribe },
+  "aave-sdk": { Component: AaveEarnSurface, describe: earnDescribe },
   external: { Component: ExternalSurface, describe: appDescribe },
   custom: { Component: CustomSurface, describe: appDescribe },
   none: null,
