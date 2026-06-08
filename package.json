@@ -12,6 +12,7 @@
     "@aave/client": "^6.1.0",
     "@aave/react": "^6.1.0",
     "@bigmi/react": "^0.8.0",
+    "@curvefi/api": "^2.68.18",
     "@lifi/sdk": "^3.16.3",
     "@lifi/widget": "^3.40.12",
     "@mysten/dapp-kit": "^1.0.6",

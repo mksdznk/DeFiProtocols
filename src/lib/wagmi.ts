@@ -36,7 +36,7 @@ const walletConnectProjectId =
  * chain's Compound markets). Override any of these via env if you have a
  * dedicated provider.
  */
-const RPC_URLS: Record<number, string> = {
+export const RPC_URLS: Record<number, string> = {
   [mainnet.id]:
     process.env.NEXT_PUBLIC_RPC_MAINNET ?? "https://ethereum-rpc.publicnode.com",
   [arbitrum.id]:

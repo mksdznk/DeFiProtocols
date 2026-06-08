@@ -123,12 +123,7 @@ export const curveConfig: ProtocolConfig = {
     "supportedChains",
     "supportedTokens",
   ],
-  interaction: {
-    kind: "external",
-    url: "https://curve.finance",
-    label: "Open Curve app",
-    note: "Swap, provide liquidity, and manage positions in the official Curve app. Non-custodial — you sign every transaction and keep control of your funds.",
-  },
+  interaction: { kind: "curve-sdk" },
   sections: [
     { type: "beginner" },
     { type: "overview" },
