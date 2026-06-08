@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EasySwapWrapper } from "@/components/lifi/EasySwapWrapper";
 import { AaveEarnWrapper } from "@/components/aave/AaveEarnWrapper";
+import { CompoundEarnWrapper } from "@/components/compound/CompoundEarnWrapper";
 import { ProtocolLogo } from "./ProtocolLogo";
 
 /**
@@ -28,6 +29,10 @@ function EasySwapSurface() {
 
 function AaveEarnSurface() {
   return <AaveEarnWrapper />;
+}
+
+function CompoundEarnSurface() {
+  return <CompoundEarnWrapper />;
 }
 
 // A call-to-action out to a protocol's official app.
@@ -92,6 +97,7 @@ export const INTERACTION_SURFACES: Record<
 > = {
   "lifi-sdk": { Component: EasySwapSurface, describe: swapDescribe },
   "aave-sdk": { Component: AaveEarnSurface, describe: earnDescribe },
+  "compound-sdk": { Component: CompoundEarnSurface, describe: earnDescribe },
   external: { Component: ExternalSurface, describe: appDescribe },
   custom: { Component: CustomSurface, describe: appDescribe },
   none: null,

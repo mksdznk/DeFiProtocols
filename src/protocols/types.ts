@@ -126,6 +126,7 @@ export interface ProtocolResources {
 export type InteractionConfig =
   | { kind: "lifi-sdk" }
   | { kind: "aave-sdk" }
+  | { kind: "compound-sdk" }
   | { kind: "custom"; component: string }
   | { kind: "external"; url: string; label: string; note?: string }
   | { kind: "none" };

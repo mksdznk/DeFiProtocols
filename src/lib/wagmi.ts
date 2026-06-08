@@ -23,8 +23,36 @@ export const chains = [
   sepolia,
 ] as const;
 
+/** Union of the chain ids wagmi is configured for (used to type chainId args). */
+export type SupportedChainId = (typeof chains)[number]["id"];
+
 const walletConnectProjectId =
   process.env.NEXT_PUBLIC_WC_PROJECT_ID ?? "";
+
+/**
+ * Reliable, CORS-enabled public RPC endpoints per chain. viem's built-in
+ * defaults (e.g. eth.merkle.io for mainnet) are rate-limited and frequently
+ * fail multicall reads, which would silently drop on-chain data (e.g. a whole
+ * chain's Compound markets). Override any of these via env if you have a
+ * dedicated provider.
+ */
+const RPC_URLS: Record<number, string> = {
+  [mainnet.id]:
+    process.env.NEXT_PUBLIC_RPC_MAINNET ?? "https://ethereum-rpc.publicnode.com",
+  [arbitrum.id]:
+    process.env.NEXT_PUBLIC_RPC_ARBITRUM ??
+    "https://arbitrum-one-rpc.publicnode.com",
+  [optimism.id]:
+    process.env.NEXT_PUBLIC_RPC_OPTIMISM ?? "https://optimism-rpc.publicnode.com",
+  [base.id]:
+    process.env.NEXT_PUBLIC_RPC_BASE ?? "https://base-rpc.publicnode.com",
+  [polygon.id]:
+    process.env.NEXT_PUBLIC_RPC_POLYGON ??
+    "https://polygon-bor-rpc.publicnode.com",
+  [sepolia.id]:
+    process.env.NEXT_PUBLIC_RPC_SEPOLIA ??
+    "https://ethereum-sepolia-rpc.publicnode.com",
+};
 
 /**
  * wagmi config factory.
@@ -51,12 +79,12 @@ export function getConfig() {
     storage: createStorage({ storage: cookieStorage }),
     ssr: true,
     transports: {
-      [mainnet.id]: http(),
-      [arbitrum.id]: http(),
-      [optimism.id]: http(),
-      [base.id]: http(),
-      [polygon.id]: http(),
-      [sepolia.id]: http(),
+      [mainnet.id]: http(RPC_URLS[mainnet.id]),
+      [arbitrum.id]: http(RPC_URLS[arbitrum.id]),
+      [optimism.id]: http(RPC_URLS[optimism.id]),
+      [base.id]: http(RPC_URLS[base.id]),
+      [polygon.id]: http(RPC_URLS[polygon.id]),
+      [sepolia.id]: http(RPC_URLS[sepolia.id]),
     },
   });
 }

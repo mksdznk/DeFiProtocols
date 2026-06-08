@@ -118,12 +118,7 @@ export const compoundConfig: ProtocolConfig = {
     "supportedAssets",
     "utilizationRate",
   ],
-  interaction: {
-    kind: "external",
-    url: "https://app.compound.finance",
-    label: "Open Compound app",
-    note: "Supply, borrow, and manage positions in the official Compound app. Non-custodial — you sign every transaction and keep control of your funds.",
-  },
+  interaction: { kind: "compound-sdk" },
   sections: [
     { type: "beginner" },
     { type: "overview" },
