@@ -15,8 +15,9 @@ export const lifiResources: ProtocolResources = {
       title: "What is LI.FI?",
       description:
         "A short introduction to LI.FI as a cross-chain liquidity and messaging layer for DeFi.",
-      url: "https://www.youtube.com/@LIFIofficial",
-      difficulty: "beginner",
+      url: "https://www.youtube.com/watch?v=c0g81uK8BWE&t=651s",
+      thumbnailUrl: "https://i3.ytimg.com/vi/c0g81uK8BWE/maxresdefault.jpg",
+      difficulty: "intermediate",
       source: "LI.FI",
     },
     {
@@ -24,19 +25,20 @@ export const lifiResources: ProtocolResources = {
       title: "Bridging your first asset",
       description:
         "Step-by-step walkthrough of connecting a wallet and moving funds across chains.",
-      url: "https://www.youtube.com/@LIFIofficial",
+      url: "https://www.youtube.com/watch?v=fSc2YvM2KYU",
+      thumbnailUrl: "https://i3.ytimg.com/vi/fSc2YvM2KYU/maxresdefault.jpg",
       difficulty: "beginner",
       source: "LI.FI",
     },
-    {
-      id: "routing-deep-dive",
-      title: "How cross-chain routing works",
-      description:
-        "A deeper look at how LI.FI aggregates bridges and DEXs to find and compare routes.",
-      url: "https://www.youtube.com/@LIFIofficial",
-      difficulty: "advanced",
-      source: "LI.FI",
-    },
+    // {
+    //   id: "routing-deep-dive",
+    //   title: "How cross-chain routing works",
+    //   description:
+    //     "A deeper look at how LI.FI aggregates bridges and DEXs to find and compare routes.",
+    //   url: "https://www.youtube.com/@LIFIofficial",
+    //   difficulty: "advanced",
+    //   source: "LI.FI",
+    // },
   ],
   articles: [
     {
@@ -44,37 +46,30 @@ export const lifiResources: ProtocolResources = {
       title: "What is LI.FI?",
       description:
         "Overview of the protocol, the problems it solves, and who it is for.",
-      url: "https://docs.li.fi/",
-      category: "Introduction",
-      readingMinutes: 5,
-    },
+      url: "https://www.quicknode.com/builders-guide/tools/li-fi-by-lifinance",
+      category: "Introduction",    },
     {
       id: "how-it-works",
       title: "How LI.FI works",
       description:
         "Aggregation across bridges and exchanges, route discovery, and execution.",
-      url: "https://docs.li.fi/",
-      category: "Concepts",
-      readingMinutes: 8,
-    },
+      url: "https://docs.li.fi/introduction/introduction",
+      category: "Concepts",    },
     {
       id: "bridge-mechanics",
       title: "Bridge mechanics & message passing",
       description:
         "How assets and messages move between chains, and the trade-offs involved.",
-      url: "https://docs.li.fi/",
+      url: "https://li.fi/knowledge-hub/navigating-arbitrary-messaging-bridges-a-comparison-framework",
       category: "Concepts",
-      readingMinutes: 10,
     },
-    {
-      id: "security-considerations",
-      title: "Security considerations",
-      description:
-        "Understanding aggregated-bridge risk and how to transact safely.",
-      url: "https://docs.li.fi/",
-      category: "Security",
-      readingMinutes: 7,
-    },
+    // {
+    //   id: "security-considerations",
+    //   title: "Security considerations",
+    //   description:
+    //     "Understanding aggregated-bridge risk and how to transact safely.",
+    //   url: "https://docs.li.fi/",
+    //   category: "Security",    },
   ],
   faqs: [
     {
