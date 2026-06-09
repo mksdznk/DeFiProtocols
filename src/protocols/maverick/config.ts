@@ -115,12 +115,7 @@ export const maverickConfig: ProtocolConfig = {
     "supportedChains",
     "supportedTokens",
   ],
-  interaction: {
-    kind: "external",
-    url: "https://app.mav.xyz",
-    label: "Open Maverick app",
-    note: "Swap, provide liquidity, and manage positions in the official Maverick app. Non-custodial — you sign every transaction and keep control of your funds.",
-  },
+  interaction: { kind: "maverick-sdk" },
   sections: [
     { type: "beginner" },
     { type: "overview" },

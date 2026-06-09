@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   ArrowDown,
@@ -10,8 +10,16 @@ import {
   Wallet,
 } from "lucide-react";
 import type { Chain } from "viem";
-import { arbitrum, base, mainnet, optimism, polygon } from "viem/chains";
-import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { formatUnits, parseUnits } from "viem";
+import { arbitrum, base, bsc, mainnet, scroll, zksync } from "viem/chains";
+import {
+  useAccount,
+  useChainId,
+  useConfig,
+  useSwitchChain,
+  useWriteContract,
+} from "wagmi";
+import { readContract, simulateContract, waitForTransactionReceipt } from "@wagmi/core";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,26 +31,30 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
-import type { SupportedChainId } from "@/lib/wagmi";
 import { TokenCombobox } from "@/components/shared/TokenCombobox";
+import type { SupportedChainId } from "@/lib/wagmi";
 import {
-  curve,
-  CURVE_NETWORKS,
-  fetchCurveTokens,
-  getCurveExpected,
-  initWriteForChain,
-  resetCurveNetwork,
-  type CurveTokenInfo,
-} from "@/lib/curve/sdk";
+  erc20Abi,
+  fetchMaverickData,
+  fetchMaverickNetworks,
+  MAVERICK_CONTRACTS,
+  type MaverickPool,
+  type MaverickToken,
+  quoterAbi,
+  routerAbi,
+  TICK_MAX,
+  TICK_MIN,
+} from "@/lib/maverick/sdk";
 
 type Phase = "form" | "working" | "done" | "error";
 
 const CHAIN_BY_ID: Record<number, Chain> = {
   [mainnet.id]: mainnet,
-  [arbitrum.id]: arbitrum,
-  [optimism.id]: optimism,
   [base.id]: base,
-  [polygon.id]: polygon,
+  [arbitrum.id]: arbitrum,
+  [bsc.id]: bsc,
+  [zksync.id]: zksync,
+  [scroll.id]: scroll,
 };
 
 function useDebounced<T>(value: T, ms: number): T {
@@ -54,8 +66,8 @@ function useDebounced<T>(value: T, ms: number): T {
   return debounced;
 }
 
-function pickToken(
-  tokens: CurveTokenInfo[],
+function pick(
+  tokens: MaverickToken[],
   prefer: string[],
   exclude?: string,
 ): string | undefined {
@@ -68,15 +80,33 @@ function pickToken(
   return tokens.find((x) => x.address !== exclude)?.address;
 }
 
+function bestPool(
+  pools: MaverickPool[],
+  from?: string,
+  to?: string,
+): MaverickPool | undefined {
+  if (!from || !to) return undefined;
+  const f = from.toLowerCase();
+  const t = to.toLowerCase();
+  return pools
+    .filter((p) => {
+      const pair = [p.tokenA.toLowerCase(), p.tokenB.toLowerCase()];
+      return pair.includes(f) && pair.includes(t);
+    })
+    .sort((a, b) => b.tvl - a.tvl)[0];
+}
+
 /**
- * A beginner-friendly Curve swap. Network and the full token list are loaded
- * live from curve-js (every swappable coin, searchable); Curve routes across its
- * pools. The swap runs through the same wallet the page uses.
+ * A beginner-friendly Maverick swap. Networks, tokens, and pools are loaded live
+ * from Maverick's API; quotes and swaps go through Maverick's Quoter/Router. The
+ * "to" choices are constrained to coins that share a pool with the "from" coin.
  */
-export function CurveEasySwap() {
-  const { isConnected, connector } = useAccount();
+export function MaverickEasySwap() {
+  const { address, isConnected } = useAccount();
   const currentChainId = useChainId();
+  const config = useConfig();
   const { switchChainAsync } = useSwitchChain();
+  const { writeContractAsync } = useWriteContract();
 
   const [connectOpen, setConnectOpen] = useState(false);
   const [chainId, setChainId] = useState<SupportedChainId>(mainnet.id);
@@ -87,35 +117,83 @@ export function CurveEasySwap() {
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  const tokensQuery = useQuery({
-    queryKey: ["curve", "tokens", chainId],
-    queryFn: () => fetchCurveTokens(chainId),
-    staleTime: 5 * 60_000,
-    retry: 1,
-  });
-  const tokens = tokensQuery.data ?? [];
+  const contracts = MAVERICK_CONTRACTS[chainId];
 
-  const fromAddr = fromOverride ?? pickToken(tokens, ["USDC", "DAI", "WETH"]);
-  const toAddr =
-    toOverride ?? pickToken(tokens, ["USDT", "crvUSD", "USDC", "DAI"], fromAddr);
+  const networksQuery = useQuery({
+    queryKey: ["maverick", "networks"],
+    queryFn: fetchMaverickNetworks,
+    staleTime: 30 * 60_000,
+  });
+  const networks = networksQuery.data ?? [];
+
+  const dataQuery = useQuery({
+    queryKey: ["maverick", "data", chainId],
+    queryFn: () => fetchMaverickData(chainId),
+    staleTime: 5 * 60_000,
+  });
+  const data = dataQuery.data;
+  const tokens = useMemo(() => data?.tokens ?? [], [data]);
+  const pools = useMemo(() => data?.pools ?? [], [data]);
+
+  const fromAddr = fromOverride ?? pick(tokens, ["USDC", "WETH", "ETH"]);
+
+  // Coins reachable from `fromAddr` in a single pool.
+  const partners = useMemo(() => {
+    if (!fromAddr) return tokens;
+    const f = fromAddr.toLowerCase();
+    const set = new Set<string>();
+    for (const p of pools) {
+      const a = p.tokenA.toLowerCase();
+      const b = p.tokenB.toLowerCase();
+      if (a === f) set.add(b);
+      else if (b === f) set.add(a);
+    }
+    return tokens.filter((t) => set.has(t.address.toLowerCase()));
+  }, [tokens, pools, fromAddr]);
+
+  const toValid =
+    toOverride && partners.some((p) => p.address === toOverride)
+      ? toOverride
+      : undefined;
+  const toAddr = toValid ?? pick(partners, ["USDT", "USDS", "WETH", "USDC"]);
 
   const fromToken = tokens.find((t) => t.address === fromAddr);
   const toToken = tokens.find((t) => t.address === toAddr);
-  const sameToken =
-    !!fromAddr && !!toAddr && fromAddr.toLowerCase() === toAddr.toLowerCase();
+  const pool = bestPool(pools, fromAddr, toAddr);
+  const tokenAIn = !!pool && fromAddr?.toLowerCase() === pool.tokenA.toLowerCase();
 
   const debouncedAmount = useDebounced(amount, 400);
   const amountNumber = Number(debouncedAmount);
   const validAmount = /^\d*\.?\d*$/.test(debouncedAmount) && amountNumber > 0;
 
   const quote = useQuery({
-    queryKey: ["curve", "quote", chainId, fromAddr, toAddr, debouncedAmount],
+    queryKey: ["maverick", "quote", chainId, pool?.id, tokenAIn, debouncedAmount],
     enabled:
-      phase === "form" && !!fromAddr && !!toAddr && !sameToken && validAmount,
+      phase === "form" &&
+      !!pool &&
+      !!fromToken &&
+      !!toToken &&
+      !!contracts &&
+      validAmount,
     staleTime: 15_000,
     retry: false,
-    queryFn: () => getCurveExpected(chainId, fromAddr!, toAddr!, debouncedAmount),
+    queryFn: async (): Promise<bigint> => {
+      const amountIn = parseUnits(debouncedAmount, fromToken!.decimals);
+      const { result } = await simulateContract(config, {
+        address: contracts!.quoter,
+        abi: quoterAbi,
+        functionName: "calculateSwap",
+        args: [pool!.id, amountIn, tokenAIn, false, tokenAIn ? TICK_MAX : TICK_MIN],
+        chainId,
+      });
+      return result[1];
+    },
   });
+
+  const outFormatted =
+    quote.data != null && toToken
+      ? Number(formatUnits(quote.data, toToken.decimals))
+      : undefined;
 
   function changeNetwork(id: number) {
     setChainId(id as SupportedChainId);
@@ -128,32 +206,58 @@ export function CurveEasySwap() {
   }
 
   async function handleSwap() {
-    if (!isConnected || !fromToken || !toToken || !validAmount || sameToken)
-      return;
+    if (!isConnected || !address || !pool || !fromToken || !validAmount) return;
+    if (quote.data == null || !contracts) return;
     setPhase("working");
     setTxHash(null);
     try {
+      const amountIn = parseUnits(amount, fromToken.decimals);
+      const minOut = (quote.data * BigInt(995)) / BigInt(1000); // 0.5% slippage
+
       if (currentChainId !== chainId) {
         setStatusMsg("Switch network in your wallet…");
         await switchChainAsync({ chainId });
       }
-      const provider = await connector?.getProvider();
-      if (!provider) throw new Error("No wallet provider available.");
 
-      setStatusMsg("Getting ready…");
-      await initWriteForChain(provider, chainId);
+      const allowance = (await readContract(config, {
+        address: fromToken.address as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "allowance",
+        args: [address, contracts.router],
+        chainId,
+      })) as bigint;
 
-      if (!(await curve.router.isApproved(fromAddr, amount))) {
+      if (allowance < amountIn) {
         setStatusMsg(`Approve ${fromToken.symbol} in your wallet…`);
-        await curve.router.approve(fromAddr, amount);
+        const approveHash = await writeContractAsync({
+          address: fromToken.address as `0x${string}`,
+          abi: erc20Abi,
+          functionName: "approve",
+          args: [contracts.router, amountIn],
+          chainId,
+        });
+        await waitForTransactionReceipt(config, { hash: approveHash, chainId });
       }
 
       setStatusMsg("Confirm the swap in your wallet…");
-      const tx = await curve.router.swap(fromAddr, toAddr, amount, 0.5);
+      const swapHash = await writeContractAsync({
+        address: contracts.router,
+        abi: routerAbi,
+        functionName: "inputSingleWithTickLimit",
+        args: [
+          address,
+          pool.id,
+          tokenAIn,
+          amountIn,
+          tokenAIn ? TICK_MAX : TICK_MIN,
+          minOut,
+        ],
+        chainId,
+      });
       setStatusMsg("Finishing your swap…");
-      await tx.wait();
+      await waitForTransactionReceipt(config, { hash: swapHash, chainId });
 
-      setTxHash(tx.hash);
+      setTxHash(swapHash);
       setPhase("done");
     } catch (err) {
       setStatusMsg(friendlyError(err));
@@ -166,7 +270,6 @@ export function CurveEasySwap() {
     setStatusMsg(null);
     setTxHash(null);
     setAmount("");
-    resetCurveNetwork();
   }
 
   if (phase !== "form") {
@@ -184,7 +287,7 @@ export function CurveEasySwap() {
     );
   }
 
-  const tokensLoading = tokensQuery.isPending;
+  const dataLoading = dataQuery.isPending || networksQuery.isPending;
 
   return (
     <div className="mx-auto w-full max-w-md">
@@ -196,12 +299,13 @@ export function CurveEasySwap() {
             <Select
               value={String(chainId)}
               onValueChange={(v) => changeNetwork(Number(v))}
+              disabled={networks.length === 0}
             >
               <SelectTrigger className="w-full" aria-label="Network">
-                <SelectValue />
+                <SelectValue placeholder="Choose a network" />
               </SelectTrigger>
               <SelectContent>
-                {CURVE_NETWORKS.map((n) => (
+                {networks.map((n) => (
                   <SelectItem key={n.chainId} value={String(n.chainId)}>
                     {n.name}
                   </SelectItem>
@@ -225,8 +329,11 @@ export function CurveEasySwap() {
             <TokenCombobox
               tokens={tokens}
               value={fromAddr}
-              onChange={setFromOverride}
-              loading={tokensLoading}
+              onChange={(a) => {
+                setFromOverride(a);
+                setToOverride(null);
+              }}
+              loading={dataLoading}
             />
           </TokenPanel>
 
@@ -246,26 +353,26 @@ export function CurveEasySwap() {
             <div className="text-3xl font-semibold tabular-nums">
               {quote.isFetching ? (
                 <span className="text-muted-foreground/50">…</span>
-              ) : quote.data ? (
-                <>≈ {formatAmount(quote.data)}</>
+              ) : outFormatted != null ? (
+                <>≈ {formatAmount(outFormatted)}</>
               ) : (
                 <span className="text-muted-foreground/40">0</span>
               )}
             </div>
             <TokenCombobox
-              tokens={tokens}
+              tokens={partners}
               value={toAddr}
               onChange={setToOverride}
-              loading={tokensLoading}
+              loading={dataLoading}
             />
           </TokenPanel>
 
           <QuoteSummary
-            tokensLoading={tokensLoading}
+            dataLoading={dataLoading}
             loading={quote.isFetching}
-            output={quote.data}
+            out={outFormatted}
             error={quote.isError}
-            sameToken={sameToken}
+            hasPool={!!pool}
             hasAmount={validAmount}
             fromSymbol={fromToken?.symbol}
             toSymbol={toToken?.symbol}
@@ -285,13 +392,13 @@ export function CurveEasySwap() {
             <Button
               size="lg"
               className="w-full"
-              disabled={sameToken || !validAmount || !quote.data}
+              disabled={!pool || !validAmount || quote.data == null}
               onClick={handleSwap}
             >
-              {sameToken
-                ? "Pick two different coins"
-                : !validAmount
-                  ? "Enter an amount"
+              {!validAmount
+                ? "Enter an amount"
+                : !pool
+                  ? "Pick coins with a pool"
                   : quote.isFetching
                     ? "Getting your best price…"
                     : "Swap now"}
@@ -325,41 +432,42 @@ function TokenPanel({
 }
 
 function QuoteSummary({
-  tokensLoading,
+  dataLoading,
   loading,
-  output,
+  out,
   error,
-  sameToken,
+  hasPool,
   hasAmount,
   fromSymbol,
   toSymbol,
   amount,
 }: {
-  tokensLoading: boolean;
+  dataLoading: boolean;
   loading: boolean;
-  output?: string;
+  out?: number;
   error: boolean;
-  sameToken: boolean;
+  hasPool: boolean;
   hasAmount: boolean;
   fromSymbol?: string;
   toSymbol?: string;
   amount: string;
 }) {
-  if (tokensLoading) return <Hint>Loading Curve markets…</Hint>;
-  if (sameToken) return <Hint>Pick two different coins to swap between.</Hint>;
+  if (dataLoading) return <Hint>Loading Maverick markets…</Hint>;
+  if (!hasPool)
+    return <Hint>These two coins don&apos;t share a pool. Try another pair.</Hint>;
   if (!hasAmount)
     return <Hint>Type an amount above to see what you&apos;ll get.</Hint>;
-  if (loading) return <Hint>Finding you the best price on Curve…</Hint>;
-  if (error || !output)
-    return <Hint>We couldn&apos;t find a route for those coins right now.</Hint>;
+  if (loading) return <Hint>Finding you the best price on Maverick…</Hint>;
+  if (error || out == null)
+    return <Hint>We couldn&apos;t price that swap right now. Try again.</Hint>;
 
-  const rate = Number(output) / Number(amount);
+  const rate = out / Number(amount);
   return (
     <div className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
       <p>
         You&apos;ll get about{" "}
         <span className="font-medium">
-          {formatAmount(output)} {toSymbol}
+          {formatAmount(out)} {toSymbol}
         </span>
         .
       </p>
@@ -367,7 +475,7 @@ function QuoteSummary({
         <p className="text-xs text-muted-foreground">
           1 {fromSymbol} ≈{" "}
           {rate.toLocaleString("en-US", { maximumFractionDigits: 6 })} {toSymbol}{" "}
-          · best route via Curve
+          · via Maverick
         </p>
       )}
     </div>
@@ -459,9 +567,8 @@ function ResultPanel({
   );
 }
 
-function formatAmount(raw: string): string {
-  const value = Number(raw);
-  if (!Number.isFinite(value)) return raw;
+function formatAmount(value: number): string {
+  if (!Number.isFinite(value)) return "0";
   const maxFrac = value < 1 ? 6 : value < 1000 ? 4 : 2;
   return value.toLocaleString("en-US", { maximumFractionDigits: maxFrac });
 }
@@ -472,7 +579,7 @@ function friendlyError(err: any): string {
   if (/reject|denied|cancell?ed|user/i.test(msg)) {
     return "You cancelled the request in your wallet.";
   }
-  if (/slippage|price|exceeded/i.test(msg)) {
+  if (/slippage|price|exceeded|min/i.test(msg)) {
     return "The price moved while confirming. Please try again.";
   }
   if (/insufficient|balance|funds/i.test(msg)) {

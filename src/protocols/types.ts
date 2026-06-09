@@ -128,6 +128,7 @@ export type InteractionConfig =
   | { kind: "aave-sdk" }
   | { kind: "compound-sdk" }
   | { kind: "curve-sdk" }
+  | { kind: "maverick-sdk" }
   | { kind: "custom"; component: string }
   | { kind: "external"; url: string; label: string; note?: string }
   | { kind: "none" };

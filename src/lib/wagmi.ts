@@ -2,17 +2,20 @@ import { cookieStorage, createConfig, createStorage, http } from "wagmi";
 import {
   arbitrum,
   base,
+  bsc,
   mainnet,
   optimism,
   polygon,
+  scroll,
   sepolia,
+  zksync,
 } from "wagmi/chains";
 import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 
 /**
  * Chains exposed to wagmi (page-level wallet connection + network switching).
- * This is intentionally a curated EVM set aligned with LiFi's most-used chains;
- * the LiFi widget discovers the full route-able chain list independently.
+ * Covers the deployments used by the integrated protocols (e.g. Maverick on
+ * BNB / zkSync Era / Scroll); each protocol still discovers its own chain list.
  */
 export const chains = [
   mainnet,
@@ -20,6 +23,9 @@ export const chains = [
   optimism,
   base,
   polygon,
+  bsc,
+  zksync,
+  scroll,
   sepolia,
 ] as const;
 
@@ -52,6 +58,12 @@ export const RPC_URLS: Record<number, string> = {
   [sepolia.id]:
     process.env.NEXT_PUBLIC_RPC_SEPOLIA ??
     "https://ethereum-sepolia-rpc.publicnode.com",
+  [bsc.id]:
+    process.env.NEXT_PUBLIC_RPC_BSC ?? "https://bsc-rpc.publicnode.com",
+  [zksync.id]:
+    process.env.NEXT_PUBLIC_RPC_ZKSYNC ?? "https://mainnet.era.zksync.io",
+  [scroll.id]:
+    process.env.NEXT_PUBLIC_RPC_SCROLL ?? "https://scroll-rpc.publicnode.com",
 };
 
 /**
@@ -84,6 +96,9 @@ export function getConfig() {
       [optimism.id]: http(RPC_URLS[optimism.id]),
       [base.id]: http(RPC_URLS[base.id]),
       [polygon.id]: http(RPC_URLS[polygon.id]),
+      [bsc.id]: http(RPC_URLS[bsc.id]),
+      [zksync.id]: http(RPC_URLS[zksync.id]),
+      [scroll.id]: http(RPC_URLS[scroll.id]),
       [sepolia.id]: http(RPC_URLS[sepolia.id]),
     },
   });

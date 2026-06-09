@@ -117,7 +117,11 @@ function EarnUI() {
   // arrive as a direct transaction, an ERC-20 approval, or a pre-action step;
   // each branch forwards the matching transaction to the wallet, per the Aave
   // docs. With no wallet client connected, the operation cancels cleanly.
-  const [sendTransaction] = useSendTransaction(walletClient);
+  // Cast needed because the wagmi config now includes zkSync Era, whose chain
+  // type widens useWalletClient's return into a union the Aave SDK doesn't accept.
+  const [sendTransaction] = useSendTransaction(
+    walletClient as Parameters<typeof useSendTransaction>[0],
+  );
   const [supply] = useSupply((plan, { cancel }) => {
     switch (plan.__typename) {
       case "TransactionRequest":

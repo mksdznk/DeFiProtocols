@@ -2,21 +2,25 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
-import type { CurveTokenInfo } from "@/lib/curve/sdk";
 import { cn } from "@/lib/utils";
 
+export interface ComboToken {
+  address: string;
+  symbol: string;
+}
+
 /**
- * Searchable token picker. Curve has up to ~1,250 tokens on a network, so this
- * filters by symbol or address and renders only the top matches (no giant
+ * Searchable token picker. Some protocols expose 1,000+ tokens on a network, so
+ * this filters by symbol or address and renders only the top matches (no giant
  * dropdown). Self-contained popover with click-outside + Escape handling.
  */
-export function TokenCombobox({
+export function TokenCombobox<T extends ComboToken>({
   tokens,
   value,
   onChange,
   loading,
 }: {
-  tokens: CurveTokenInfo[];
+  tokens: T[];
   value?: string;
   onChange: (address: string) => void;
   loading?: boolean;
