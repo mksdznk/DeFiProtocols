@@ -113,12 +113,7 @@ export const lidoConfig: ProtocolConfig = {
     "marketShare",
     "supportedChains",
   ],
-  interaction: {
-    kind: "external",
-    url: "https://stake.lido.fi",
-    label: "Open Lido app",
-    note: "Stake ETH, wrap/unwrap stETH, and request withdrawals in the official Lido app. Non-custodial — you sign every transaction and keep control of your funds.",
-  },
+  interaction: { kind: "lido-sdk" },
   sections: [
     { type: "beginner" },
     { type: "overview" },

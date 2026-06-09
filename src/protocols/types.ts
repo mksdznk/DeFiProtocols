@@ -129,6 +129,7 @@ export type InteractionConfig =
   | { kind: "compound-sdk" }
   | { kind: "curve-sdk" }
   | { kind: "maverick-sdk" }
+  | { kind: "lido-sdk" }
   | { kind: "custom"; component: string }
   | { kind: "external"; url: string; label: string; note?: string }
   | { kind: "none" };

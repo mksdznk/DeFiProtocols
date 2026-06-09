@@ -8,6 +8,7 @@ import { AaveEarnWrapper } from "@/components/aave/AaveEarnWrapper";
 import { CompoundEarnWrapper } from "@/components/compound/CompoundEarnWrapper";
 import { CurveSwapWrapper } from "@/components/curve/CurveSwapWrapper";
 import { MaverickSwapWrapper } from "@/components/maverick/MaverickSwapWrapper";
+import { LidoStakeWrapper } from "@/components/lido/LidoStakeWrapper";
 import { ProtocolLogo } from "./ProtocolLogo";
 
 /**
@@ -43,6 +44,10 @@ function CurveSwapSurface() {
 
 function MaverickSwapSurface() {
   return <MaverickSwapWrapper />;
+}
+
+function LidoStakeSurface() {
+  return <LidoStakeWrapper />;
 }
 
 // A call-to-action out to a protocol's official app.
@@ -103,6 +108,9 @@ const curveDescribe = (config: ProtocolConfig) =>
 const maverickDescribe = (config: ProtocolConfig) =>
   `Swap tokens in a few simple steps through ${config.name}'s pools.`;
 
+const lidoDescribe = (config: ProtocolConfig) =>
+  `Stake ETH and earn staking rewards with ${config.name} — in a few simple taps. You get stETH that stays usable across DeFi.`;
+
 /**
  * A `null` entry means "render no interaction section at all" (e.g. `none`),
  * so the panel needs no special-casing for it.
@@ -116,6 +124,7 @@ export const INTERACTION_SURFACES: Record<
   "compound-sdk": { Component: CompoundEarnSurface, describe: earnDescribe },
   "curve-sdk": { Component: CurveSwapSurface, describe: curveDescribe },
   "maverick-sdk": { Component: MaverickSwapSurface, describe: maverickDescribe },
+  "lido-sdk": { Component: LidoStakeSurface, describe: lidoDescribe },
   external: { Component: ExternalSurface, describe: appDescribe },
   custom: { Component: CustomSurface, describe: appDescribe },
   none: null,
