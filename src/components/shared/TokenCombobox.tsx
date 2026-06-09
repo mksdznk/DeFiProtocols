@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 export interface ComboToken {
   address: string;
   symbol: string;
+  /** Optional fuller name (e.g. "Apple xStock"); used for search + subtitle. */
+  name?: string;
 }
 
 /**
@@ -54,6 +56,7 @@ export function TokenCombobox<T extends ComboToken>({
       .filter(
         (t) =>
           t.symbol.toLowerCase().includes(q) ||
+          (t.name?.toLowerCase().includes(q) ?? false) ||
           t.address.toLowerCase().includes(q),
       )
       .sort((a, b) => score(b.symbol, q) - score(a.symbol, q))
@@ -107,7 +110,14 @@ export function TokenCombobox<T extends ComboToken>({
                       t.address === value && "bg-accent/60",
                     )}
                   >
-                    <span className="truncate font-medium">{t.symbol}</span>
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate font-medium">{t.symbol}</span>
+                      {t.name && (
+                        <span className="truncate text-xs text-muted-foreground">
+                          {t.name}
+                        </span>
+                      )}
+                    </span>
                     <span className="shrink-0 font-mono text-xs text-muted-foreground">
                       {t.address.slice(0, 6)}…{t.address.slice(-4)}
                     </span>

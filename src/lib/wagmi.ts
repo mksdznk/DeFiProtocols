@@ -3,7 +3,10 @@ import {
   arbitrum,
   base,
   bsc,
+  hyperEvm,
+  ink,
   mainnet,
+  mantle,
   optimism,
   polygon,
   scroll,
@@ -15,7 +18,8 @@ import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
 /**
  * Chains exposed to wagmi (page-level wallet connection + network switching).
  * Covers the deployments used by the integrated protocols (e.g. Maverick on
- * BNB / zkSync Era / Scroll); each protocol still discovers its own chain list.
+ * BNB / zkSync Era / Scroll, Backed xStocks on Mantle / HyperEVM / Ink); each
+ * protocol still discovers its own chain list.
  */
 export const chains = [
   mainnet,
@@ -26,6 +30,9 @@ export const chains = [
   bsc,
   zksync,
   scroll,
+  mantle,
+  hyperEvm,
+  ink,
   sepolia,
 ] as const;
 
@@ -64,6 +71,12 @@ export const RPC_URLS: Record<number, string> = {
     process.env.NEXT_PUBLIC_RPC_ZKSYNC ?? "https://mainnet.era.zksync.io",
   [scroll.id]:
     process.env.NEXT_PUBLIC_RPC_SCROLL ?? "https://scroll-rpc.publicnode.com",
+  [mantle.id]:
+    process.env.NEXT_PUBLIC_RPC_MANTLE ?? "https://mantle-rpc.publicnode.com",
+  [hyperEvm.id]:
+    process.env.NEXT_PUBLIC_RPC_HYPEREVM ?? "https://rpc.hyperliquid.xyz/evm",
+  [ink.id]:
+    process.env.NEXT_PUBLIC_RPC_INK ?? "https://rpc-gel.inkonchain.com",
 };
 
 /**
@@ -99,6 +112,9 @@ export function getConfig() {
       [bsc.id]: http(RPC_URLS[bsc.id]),
       [zksync.id]: http(RPC_URLS[zksync.id]),
       [scroll.id]: http(RPC_URLS[scroll.id]),
+      [mantle.id]: http(RPC_URLS[mantle.id]),
+      [hyperEvm.id]: http(RPC_URLS[hyperEvm.id]),
+      [ink.id]: http(RPC_URLS[ink.id]),
       [sepolia.id]: http(RPC_URLS[sepolia.id]),
     },
   });

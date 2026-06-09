@@ -9,6 +9,7 @@ import { CompoundEarnWrapper } from "@/components/compound/CompoundEarnWrapper";
 import { CurveSwapWrapper } from "@/components/curve/CurveSwapWrapper";
 import { MaverickSwapWrapper } from "@/components/maverick/MaverickSwapWrapper";
 import { LidoStakeWrapper } from "@/components/lido/LidoStakeWrapper";
+import { BackedBuyWrapper } from "@/components/backed/BackedBuyWrapper";
 import { ProtocolLogo } from "./ProtocolLogo";
 
 /**
@@ -48,6 +49,10 @@ function MaverickSwapSurface() {
 
 function LidoStakeSurface() {
   return <LidoStakeWrapper />;
+}
+
+function BackedBuySurface() {
+  return <BackedBuyWrapper />;
 }
 
 // A call-to-action out to a protocol's official app.
@@ -111,6 +116,9 @@ const maverickDescribe = (config: ProtocolConfig) =>
 const lidoDescribe = (config: ProtocolConfig) =>
   `Stake ETH and earn staking rewards with ${config.name} — in a few simple taps. You get stETH that stays usable across DeFi.`;
 
+const backedDescribe = (config: ProtocolConfig) =>
+  `Buy tokenized stocks, ETFs, and indexes with ${config.name} — pay with USDC and own a token that tracks the real thing.`;
+
 /**
  * A `null` entry means "render no interaction section at all" (e.g. `none`),
  * so the panel needs no special-casing for it.
@@ -125,6 +133,7 @@ export const INTERACTION_SURFACES: Record<
   "curve-sdk": { Component: CurveSwapSurface, describe: curveDescribe },
   "maverick-sdk": { Component: MaverickSwapSurface, describe: maverickDescribe },
   "lido-sdk": { Component: LidoStakeSurface, describe: lidoDescribe },
+  "backed-sdk": { Component: BackedBuySurface, describe: backedDescribe },
   external: { Component: ExternalSurface, describe: appDescribe },
   custom: { Component: CustomSurface, describe: appDescribe },
   none: null,

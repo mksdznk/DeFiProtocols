@@ -115,10 +115,7 @@ export const backedConfig: ProtocolConfig = {
     "supportedChains",
   ],
   interaction: {
-    kind: "external",
-    url: "https://backed.fi",
-    label: "Explore on Backed",
-    note: "Browse tokenized products on Backed. Primary minting and redemption are available to eligible participants; bTokens also trade on secondary markets and DEXs.",
+    kind: "backed-sdk",
   },
   sections: [
     { type: "beginner" },
