@@ -81,12 +81,6 @@ function ArticleRow({ article }: { article: ArticleResource }) {
         <p className="text-sm text-muted-foreground">{article.description}</p>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {article.category && <span>{article.category}</span>}
-          {article.readingMinutes && (
-            <>
-              <span aria-hidden>·</span>
-              <span>{article.readingMinutes} min read</span>
-            </>
-          )}
         </div>
       </div>
     </a>
