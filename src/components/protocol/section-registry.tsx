@@ -34,13 +34,13 @@ export const SECTION_REGISTRY: Record<SectionType, SectionMeta> = {
     title: "Start here",
     Component: ProtocolBeginnerGuide,
   },
-  overview: { id: "overview", title: "Overview", Component: ProtocolOverview },
-  metrics: { id: "metrics", title: "Key metrics", Component: ProtocolMetrics },
   interaction: {
     id: "interact",
     title: "Swap & bridge",
     Component: ProtocolInteractionPanel,
   },
+  overview: { id: "overview", title: "Overview", Component: ProtocolOverview },
+  metrics: { id: "metrics", title: "Key metrics", Component: ProtocolMetrics },
   analytics: { id: "analytics", title: "Analytics", Component: ProtocolAnalytics },
   integrations: {
     id: "integrations",

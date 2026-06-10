@@ -13,9 +13,9 @@ import type { MetricKey } from "@/lib/analytics/types";
 /** Identifiers for the section modules the renderer knows how to mount. */
 export type SectionType =
   | "beginner"
+  | "interaction"
   | "overview"
   | "metrics"
-  | "interaction"
   | "analytics"
   | "integrations"
   | "resources"
@@ -107,7 +107,6 @@ export interface ArticleResource {
   description: string;
   url: string;
   category?: string;
-  readingMinutes?: number;
 }
 
 export interface FaqItem {

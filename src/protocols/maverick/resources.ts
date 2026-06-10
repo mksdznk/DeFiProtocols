@@ -3,84 +3,102 @@ import type { ProtocolResources } from "@/protocols/types";
 /**
  * Educational content for the Maverick page.
  *
- * URLs point at canonical, stable destinations (mav.xyz / docs.mav.xyz /
- * official channels). Deep links and thumbnails should be curated/verified by
- * the content team before launch.
+ * Links are real, verified destinations: Maverick's official docs and an
+ * official tutorial, a reputable explainer (CoinMarketCap Academy) and research
+ * deep-dive (Shoal), plus walkthrough videos (DeFi Dad and community creators)
+ * covering the Dynamic Distribution AMM, swapping, and Liquidity Modes.
  */
 export const maverickResources: ProtocolResources = {
   videos: [
     {
-      id: "what-is-maverick",
-      title: "What is Maverick Protocol?",
+      id: "maverick-amm-explained",
+      title: "Maverick: an AMM for all market conditions",
       description:
-        "An introduction to Maverick and its Dynamic Distribution AMM (DDAMM).",
-      url: "https://www.youtube.com/@maverickprotocol",
+        "A clear walkthrough of how Maverick's Dynamic Distribution AMM works and why it aims for greater capital efficiency.",
+      url: "https://www.youtube.com/watch?v=kkHO0go42bI",
+      thumbnailUrl: "https://i3.ytimg.com/vi/kkHO0go42bI/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Maverick",
+      source: "DeFi Dad",
     },
     {
-      id: "swapping-walkthrough",
-      title: "Swapping on Maverick",
+      id: "maverick-earn-yield",
+      title: "Maverick tutorial: earn yield with liquidity pools",
       description:
-        "How to connect a wallet and swap tokens across Maverick's concentrated liquidity.",
-      url: "https://www.youtube.com/@maverickprotocol",
+        "A hands-on guide to connecting a wallet and providing liquidity on Maverick to earn swap fees.",
+      url: "https://www.youtube.com/watch?v=J3CjwV0kOFs",
+      thumbnailUrl: "https://i3.ytimg.com/vi/J3CjwV0kOFs/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Maverick",
+      source: "Krypto Cove",
     },
     {
-      id: "liquidity-modes",
-      title: "Providing liquidity & Liquidity Modes",
+      id: "liquidity-shaping-tutorial",
+      title: "Liquidity shaping tutorial (Liquidity Modes)",
       description:
-        "How Maverick's directional Liquidity Modes move liquidity as price changes.",
-      url: "https://www.youtube.com/@maverickprotocol",
+        "Maverick's official walkthrough of shaping a liquidity position with the directional Liquidity Modes.",
+      url: "https://www.youtube.com/watch?v=mC-WI3pvo9s",
+      thumbnailUrl: "https://i3.ytimg.com/vi/mC-WI3pvo9s/maxresdefault.jpg",
       difficulty: "intermediate",
-      source: "Maverick",
+      source: "Maverick Protocol",
     },
     {
-      id: "vemav-boosted",
-      title: "veMAV & Boosted Positions",
+      id: "maverick-amm-deep-dive",
+      title: "Maverick's next-gen AMM (team interview)",
       description:
-        "Locking MAV for veMAV, directing incentives, and Boosted Positions.",
-      url: "https://www.youtube.com/@maverickprotocol",
+        "A deeper conversation with the Maverick team on the design of its AMM and what directional liquidity unlocks.",
+      url: "https://www.youtube.com/watch?v=1D_W0sokCbw",
+      thumbnailUrl: "https://i3.ytimg.com/vi/1D_W0sokCbw/maxresdefault.jpg",
       difficulty: "advanced",
-      source: "Maverick",
+      source: "Crypto Coin Show",
     },
   ],
   articles: [
     {
-      id: "what-is-maverick-doc",
-      title: "What is Maverick?",
-      description: "Overview of the protocol and the problems it solves.",
-      url: "https://docs.mav.xyz",
+      id: "what-is-maverick",
+      title: "What is Maverick Protocol?",
+      description:
+        "A clear introduction to Maverick — directional liquidity providing and its Dynamic Distribution AMM.",
+      url: "https://coinmarketcap.com/academy/article/what-is-maverick-protocol",
       category: "Introduction",
-      readingMinutes: 5,
     },
     {
-      id: "ddamm",
-      title: "The Dynamic Distribution AMM",
+      id: "introducing-maverick-docs",
+      title: "Maverick documentation",
       description:
-        "How Maverick's AMM concentrates and automatically moves liquidity.",
-      url: "https://docs.mav.xyz",
-      category: "Concepts",
-      readingMinutes: 9,
+        "Maverick's official docs: the Dynamic Distribution AMM and how trading and liquidity work.",
+      url: "https://docs.mav.xyz/",
+      category: "Documentation",
     },
     {
-      id: "liquidity-modes-doc",
-      title: "Liquidity Modes explained",
+      id: "guide-traders",
+      title: "Guide: swapping on Maverick",
       description:
-        "Static, Right, Left, and Both modes — and when to use each.",
-      url: "https://docs.mav.xyz",
-      category: "Concepts",
-      readingMinutes: 7,
+        "A step-by-step guide to swapping tokens on Maverick from your own wallet.",
+      url: "https://docs.mav.xyz/guides/traders",
+      category: "Guides",
     },
     {
-      id: "boosted-vemav",
-      title: "Boosted Positions & veMAV",
+      id: "liquidity-strategies",
+      title: "Liquidity Modes & strategies",
       description:
-        "How incentives are directed and how veMAV boosts rewards.",
-      url: "https://docs.mav.xyz",
+        "How Static, Right, Left, and Both modes move your liquidity with price — and when to use each.",
+      url: "https://docs.mav.xyz/guides/liquidity-providers/liquidity-strategies",
       category: "Concepts",
-      readingMinutes: 6,
+    },
+    {
+      id: "maverick-deep-dive",
+      title: "Maverick: the dynamic liquidity provision AMM",
+      description:
+        "A research deep-dive into Maverick's design, capital efficiency, and how it compares to other AMMs.",
+      url: "https://www.shoal.gg/p/maverick-the-dynamic-liquidity-provision",
+      category: "Deep dive",
+    },
+    {
+      id: "mav-token-explained",
+      title: "MAV & veMAV explained",
+      description:
+        "How the MAV token and vote-escrowed veMAV power governance and direct liquidity incentives.",
+      url: "https://onekey.so/blog/ecosystem/mav-token-explained-governance-and-liquidity-in-the-maverick-protocol/",
+      category: "Governance",
     },
   ],
   faqs: [

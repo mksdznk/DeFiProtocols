@@ -20,11 +20,6 @@ export function SiteHeader() {
           </span>
           <span className="hidden sm:inline">DeFi Protocol Hub</span>
         </Link>
-        <nav className="ml-2 hidden items-center gap-4 text-sm text-muted-foreground sm:flex">
-          <Link href="/protocols/lifi" className="hover:text-foreground">
-            Protocols
-          </Link>
-        </nav>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
           <ConnectButton />

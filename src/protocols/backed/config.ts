@@ -119,9 +119,9 @@ export const backedConfig: ProtocolConfig = {
   },
   sections: [
     { type: "beginner" },
+    { type: "interaction" },
     { type: "overview" },
     { type: "metrics" },
-    { type: "interaction" },
     { type: "analytics" },
     { type: "integrations" },
     { type: "resources" },

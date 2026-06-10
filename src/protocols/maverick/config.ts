@@ -118,9 +118,9 @@ export const maverickConfig: ProtocolConfig = {
   interaction: { kind: "maverick-sdk" },
   sections: [
     { type: "beginner" },
+    { type: "interaction" },
     { type: "overview" },
     { type: "metrics" },
-    { type: "interaction" },
     { type: "analytics" },
     { type: "integrations" },
     { type: "resources" },

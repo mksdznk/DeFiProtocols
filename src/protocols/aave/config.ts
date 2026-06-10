@@ -125,9 +125,9 @@ export const aaveConfig: ProtocolConfig = {
   interaction: { kind: "aave-sdk" },
   sections: [
     { type: "beginner" },
+    { type: "interaction" },
     { type: "overview" },
     { type: "metrics" },
-    { type: "interaction" },
     { type: "analytics" },
     { type: "integrations" },
     { type: "resources" },
