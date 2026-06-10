@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
 import { ensureLifiConfig, LIFI_INTEGRATOR } from "@/lib/lifi/sdk";
 import {
@@ -252,6 +253,8 @@ function SwapForm({
             tokenAddr={fromTokenAddr}
             onChain={changeFromChain}
             onToken={setFromTokenAddr}
+            tokenTip="The coin you'll pay with"
+            networkTip="The network you're paying from"
           />
         </TokenPanel>
 
@@ -278,6 +281,8 @@ function SwapForm({
             tokenAddr={toTokenAddr}
             onChain={changeToChain}
             onToken={setToTokenAddr}
+            tokenTip="The coin you'll receive"
+            networkTip="The network you'll receive on"
           />
         </TokenPanel>
 
@@ -333,20 +338,28 @@ function TokenChainPicker({
   tokenAddr,
   onChain,
   onToken,
+  tokenTip,
+  networkTip,
 }: {
   tokens: EasyTokenMap;
   chainId: number;
   tokenAddr: string;
   onChain: (id: number) => void;
   onToken: (addr: string) => void;
+  /** Tooltip labelling the coin selector for this side of the swap. */
+  tokenTip: string;
+  /** Tooltip labelling the network selector for this side of the swap. */
+  networkTip: string;
 }) {
   const list = tokens[chainId] ?? [];
   return (
     <div className="flex shrink-0 flex-col gap-1.5">
       <Select value={tokenAddr} onValueChange={onToken}>
-        <SelectTrigger size="sm" className="min-w-28" aria-label="Coin">
-          <SelectValue placeholder="Coin" />
-        </SelectTrigger>
+        <FieldTooltip label={tokenTip}>
+          <SelectTrigger size="sm" className="min-w-28" aria-label="Coin">
+            <SelectValue placeholder="Coin" />
+          </SelectTrigger>
+        </FieldTooltip>
         <SelectContent>
           {list.map((t: Token) => (
             <SelectItem key={t.address} value={t.address}>
@@ -356,9 +369,11 @@ function TokenChainPicker({
         </SelectContent>
       </Select>
       <Select value={String(chainId)} onValueChange={(v) => onChain(Number(v))}>
-        <SelectTrigger size="sm" className="min-w-28" aria-label="Network">
-          <SelectValue placeholder="Network" />
-        </SelectTrigger>
+        <FieldTooltip label={networkTip}>
+          <SelectTrigger size="sm" className="min-w-28" aria-label="Network">
+            <SelectValue placeholder="Network" />
+          </SelectTrigger>
+        </FieldTooltip>
         <SelectContent>
           {EASY_CHAINS.map((c) => (
             <SelectItem key={c.id} value={String(c.id)}>

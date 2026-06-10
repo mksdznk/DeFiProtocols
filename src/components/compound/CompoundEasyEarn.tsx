@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
 import { cometAbi, erc20Abi } from "@/lib/compound/markets";
 import {
@@ -186,9 +187,11 @@ export function CompoundEasyEarn() {
                   setSelectedComet("");
                 }}
               >
-                <SelectTrigger className="w-full" aria-label="Network">
-                  <SelectValue placeholder="Choose a network" />
-                </SelectTrigger>
+                <FieldTooltip label="The network this Compound market is on">
+                  <SelectTrigger className="w-full" aria-label="Network">
+                    <SelectValue placeholder="Choose a network" />
+                  </SelectTrigger>
+                </FieldTooltip>
                 <SelectContent>
                   {chainIds.map((id) => (
                     <SelectItem key={id} value={String(id)}>
@@ -213,9 +216,11 @@ export function CompoundEasyEarn() {
                 value={market?.comet ?? ""}
                 onValueChange={setSelectedComet}
               >
-                <SelectTrigger className="w-full" aria-label="Coin to deposit">
-                  <SelectValue />
-                </SelectTrigger>
+                <FieldTooltip label="The coin you'll deposit to earn interest">
+                  <SelectTrigger className="w-full" aria-label="Coin to deposit">
+                    <SelectValue />
+                  </SelectTrigger>
+                </FieldTooltip>
                 <SelectContent>
                   {coins.map((m) => (
                     <SelectItem key={m.comet} value={m.comet}>

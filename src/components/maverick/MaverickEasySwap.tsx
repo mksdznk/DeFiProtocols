@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/select";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
 import { TokenCombobox } from "@/components/shared/TokenCombobox";
+import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import type { SupportedChainId } from "@/lib/wagmi";
 import {
   erc20Abi,
@@ -301,9 +302,11 @@ export function MaverickEasySwap() {
               onValueChange={(v) => changeNetwork(Number(v))}
               disabled={networks.length === 0}
             >
-              <SelectTrigger className="w-full" aria-label="Network">
-                <SelectValue placeholder="Choose a network" />
-              </SelectTrigger>
+              <FieldTooltip label="The network you're swapping on">
+                <SelectTrigger className="w-full" aria-label="Network">
+                  <SelectValue placeholder="Choose a network" />
+                </SelectTrigger>
+              </FieldTooltip>
               <SelectContent>
                 {networks.map((n) => (
                   <SelectItem key={n.chainId} value={String(n.chainId)}>
@@ -334,6 +337,7 @@ export function MaverickEasySwap() {
                 setToOverride(null);
               }}
               loading={dataLoading}
+              tooltip="The coin you'll pay with"
             />
           </TokenPanel>
 
@@ -364,6 +368,7 @@ export function MaverickEasySwap() {
               value={toAddr}
               onChange={setToOverride}
               loading={dataLoading}
+              tooltip="The coin you'll receive"
             />
           </TokenPanel>
 

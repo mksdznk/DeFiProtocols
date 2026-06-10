@@ -25,6 +25,7 @@ import {
 import { ConnectModal } from "@/components/wallet/ConnectModal";
 import type { SupportedChainId } from "@/lib/wagmi";
 import { TokenCombobox } from "@/components/shared/TokenCombobox";
+import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import {
   curve,
   CURVE_NETWORKS,
@@ -34,7 +35,6 @@ import {
   resetCurveNetwork,
   type CurveTokenInfo,
 } from "@/lib/curve/sdk";
-import { Tooltip, TooltipContent } from "../ui/tooltip";
 
 type Phase = "form" | "working" | "done" | "error";
 
@@ -198,9 +198,11 @@ export function CurveEasySwap() {
               value={String(chainId)}
               onValueChange={(v) => changeNetwork(Number(v))}
             >
-              <SelectTrigger className="w-full" aria-label="Network">
-                <SelectValue />
-              </SelectTrigger>
+              <FieldTooltip label="The network you're swapping on">
+                <SelectTrigger className="w-full" aria-label="Network">
+                  <SelectValue />
+                </SelectTrigger>
+              </FieldTooltip>
               <SelectContent>
                 {CURVE_NETWORKS.map((n) => (
                   <SelectItem key={n.chainId} value={String(n.chainId)}>
@@ -228,6 +230,7 @@ export function CurveEasySwap() {
               value={fromAddr}
               onChange={setFromOverride}
               loading={tokensLoading}
+              tooltip="The coin you'll pay with"
             />
           </TokenPanel>
 
@@ -258,6 +261,7 @@ export function CurveEasySwap() {
               value={toAddr}
               onChange={setToOverride}
               loading={tokensLoading}
+              tooltip="The coin you'll receive"
             />
           </TokenPanel>
 

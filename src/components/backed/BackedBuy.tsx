@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TokenCombobox } from "@/components/shared/TokenCombobox";
+import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
 import { ensureLifiConfig, LIFI_INTEGRATOR } from "@/lib/lifi/sdk";
 import {
@@ -259,9 +260,11 @@ function BuyForm({
               value={String(chainId)}
               onValueChange={(v) => changeChain(Number(v))}
             >
-              <SelectTrigger className="w-full" aria-label="Network">
-                <SelectValue placeholder="Network" />
-              </SelectTrigger>
+              <FieldTooltip label="The network you'll buy on">
+                <SelectTrigger className="w-full" aria-label="Network">
+                  <SelectValue placeholder="Network" />
+                </SelectTrigger>
+              </FieldTooltip>
               <SelectContent>
                 {networks.map((n) => (
                   <SelectItem key={n.chainId} value={String(n.chainId)}>
@@ -277,6 +280,7 @@ function BuyForm({
               tokens={comboTokens}
               value={stockAddr}
               onChange={setStockAddr}
+              tooltip="The tokenized stock you'll buy"
             />
           </div>
         </div>

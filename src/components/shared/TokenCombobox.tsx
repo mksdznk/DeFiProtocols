@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FieldTooltip } from "./FieldTooltip";
 
 export interface ComboToken {
   address: string;
@@ -21,11 +22,14 @@ export function TokenCombobox<T extends ComboToken>({
   value,
   onChange,
   loading,
+  tooltip,
 }: {
   tokens: T[];
   value?: string;
   onChange: (address: string) => void;
   loading?: boolean;
+  /** Optional label shown on hover/focus, e.g. "The coin you'll receive". */
+  tooltip?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -63,19 +67,23 @@ export function TokenCombobox<T extends ComboToken>({
       .slice(0, 60);
   }, [tokens, query]);
 
+  const trigger = (
+    <button
+      type="button"
+      disabled={loading || tokens.length === 0}
+      onClick={() => setOpen((o) => !o)}
+      className="focus-visible:ring-ring flex h-9 min-w-28 items-center justify-between gap-1.5 rounded-md border border-border bg-background px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
+    >
+      <span className="truncate">
+        {loading ? "…" : (selected?.symbol ?? "Select")}
+      </span>
+      <ChevronDown className="size-3.5 shrink-0 opacity-60" aria-hidden />
+    </button>
+  );
+
   return (
     <div ref={ref} className="relative shrink-0">
-      <button
-        type="button"
-        disabled={loading || tokens.length === 0}
-        onClick={() => setOpen((o) => !o)}
-        className="focus-visible:ring-ring flex h-9 min-w-28 items-center justify-between gap-1.5 rounded-md border border-border bg-background px-3 text-sm font-medium transition-colors hover:bg-accent focus-visible:ring-2 focus-visible:outline-none disabled:opacity-50"
-      >
-        <span className="truncate">
-          {loading ? "…" : (selected?.symbol ?? "Select")}
-        </span>
-        <ChevronDown className="size-3.5 shrink-0 opacity-60" aria-hidden />
-      </button>
+      {tooltip ? <FieldTooltip label={tooltip}>{trigger}</FieldTooltip> : trigger}
 
       {open && (
         <div className="absolute right-0 z-50 mt-1 w-64 overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md">

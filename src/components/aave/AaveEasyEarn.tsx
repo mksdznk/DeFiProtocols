@@ -33,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
 
 // Placeholder used only while a read is paused (no real query is sent).
@@ -210,9 +211,11 @@ function EarnUI() {
                   setReserveId("");
                 }}
               >
-                <SelectTrigger className="w-full" aria-label="Network">
-                  <SelectValue placeholder="Choose a network" />
-                </SelectTrigger>
+                <FieldTooltip label="The network this Aave market is on">
+                  <SelectTrigger className="w-full" aria-label="Network">
+                    <SelectValue placeholder="Choose a network" />
+                  </SelectTrigger>
+                </FieldTooltip>
                 <SelectContent>
                   {networks.map((c) => (
                     <SelectItem key={c.chainId} value={String(c.chainId)}>
@@ -237,9 +240,11 @@ function EarnUI() {
                 }}
                 disabled={!spokes?.length}
               >
-                <SelectTrigger className="w-full" aria-label="Market">
-                  <SelectValue placeholder="Choose a market" />
-                </SelectTrigger>
+                <FieldTooltip label="The Aave market to deposit into">
+                  <SelectTrigger className="w-full" aria-label="Market">
+                    <SelectValue placeholder="Choose a market" />
+                  </SelectTrigger>
+                </FieldTooltip>
                 <SelectContent>
                   {(spokes ?? []).map((s) => (
                     <SelectItem key={s.address} value={s.address}>
@@ -264,9 +269,11 @@ function EarnUI() {
                 value={selected?.id ?? ""}
                 onValueChange={setReserveId}
               >
-                <SelectTrigger className="w-full" aria-label="Coin to deposit">
-                  <SelectValue />
-                </SelectTrigger>
+                <FieldTooltip label="The coin you'll deposit to earn interest">
+                  <SelectTrigger className="w-full" aria-label="Coin to deposit">
+                    <SelectValue />
+                  </SelectTrigger>
+                </FieldTooltip>
                 <SelectContent>
                   {supplyable.map((r) => (
                     <SelectItem key={r.id} value={r.id}>
