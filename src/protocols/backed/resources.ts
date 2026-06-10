@@ -3,84 +3,103 @@ import type { ProtocolResources } from "@/protocols/types";
 /**
  * Educational content for the Backed page.
  *
- * URLs point at canonical, stable destinations (backed.fi / docs.backed.fi /
- * official channels). Deep links and thumbnails should be curated/verified by
- * the content team before launch.
+ * Links are real, verified destinations: Backed's official xStocks docs and
+ * issuer site, reputable explainers (Chainlink, MetaMask), and walkthrough
+ * videos (Kraken, CNA, and community creators). Backed's tokenized stocks are
+ * distributed as "xStocks", so much of the best beginner material lives under
+ * that brand and on the venues that list them.
  */
 export const backedResources: ProtocolResources = {
   videos: [
     {
-      id: "what-is-backed",
-      title: "What is Backed?",
+      id: "tokenized-equities-explained",
+      title: "Tokenized equities explained: how xStocks work",
       description:
-        "An introduction to Backed and tokenized real-world assets (bTokens).",
-      url: "https://www.youtube.com/@backedfi",
+        "A clear primer on how Backed's xStocks bring real equities on-chain as 1:1-backed tokens, and why that matters.",
+      url: "https://www.youtube.com/watch?v=OpiyVve5URM",
+      thumbnailUrl: "https://i3.ytimg.com/vi/OpiyVve5URM/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Backed",
+      source: "Kraken",
     },
     {
-      id: "tokenized-securities",
-      title: "How tokenized securities work",
+      id: "what-are-tokenized-stocks",
+      title: "CNA Explains: What are tokenised stocks?",
       description:
-        "How a bToken tracks a real stock, ETF, or bond held 1:1 in custody.",
-      url: "https://www.youtube.com/@backedfi",
+        "A short, news-style explainer on what tokenized stocks are and how they differ from buying shares the traditional way.",
+      url: "https://www.youtube.com/watch?v=XaD3K_JSzbs",
+      thumbnailUrl: "https://i3.ytimg.com/vi/XaD3K_JSzbs/hqdefault.jpg",
       difficulty: "beginner",
-      source: "Backed",
+      source: "CNA",
     },
     {
-      id: "btokens-in-defi",
-      title: "Using bTokens in DeFi",
+      id: "how-to-buy-xstocks",
+      title: "How to buy tokenized stocks (xStocks)",
       description:
-        "How composable, ERC-20 bTokens can be used as collateral and liquidity.",
-      url: "https://www.youtube.com/@backedfi",
+        "A step-by-step walkthrough of buying a Backed xStock, from finding the ticker to holding it in your wallet.",
+      url: "https://www.youtube.com/watch?v=DOL8TC-dtw0",
+      thumbnailUrl: "https://i3.ytimg.com/vi/DOL8TC-dtw0/maxresdefault.jpg",
+      difficulty: "beginner",
+      source: "MoneyZG",
+    },
+    {
+      id: "buy-xstocks-24-7",
+      title: "Buying tokenized stocks 24/7 across venues",
+      description:
+        "How xStocks trade around the clock and how to buy them on different exchanges and wallets.",
+      url: "https://www.youtube.com/watch?v=sdf_Khl4C1k",
+      thumbnailUrl: "https://i3.ytimg.com/vi/sdf_Khl4C1k/maxresdefault.jpg",
       difficulty: "intermediate",
-      source: "Backed",
-    },
-    {
-      id: "xstocks",
-      title: "xStocks: tokenized equities",
-      description:
-        "How Backed powers tokenized stocks available across multiple chains.",
-      url: "https://www.youtube.com/@backedfi",
-      difficulty: "advanced",
-      source: "Backed",
+      source: "Crypto AiMan",
     },
   ],
   articles: [
     {
-      id: "what-is-backed-doc",
-      title: "What is Backed?",
-      description: "Overview of tokenized real-world assets and how Backed works.",
-      url: "https://docs.backed.fi",
+      id: "tokenized-stocks-explained",
+      title: "Tokenized stocks & equities explained",
+      description:
+        "What tokenized equities are, how 1:1 backing works, and a look at Backed/xStocks as a real-world example.",
+      url: "https://chain.link/education-hub/tokenized-stocks-equities-explained",
       category: "Introduction",
-      readingMinutes: 5,
     },
     {
-      id: "collateralization",
-      title: "How bTokens are collateralized",
+      id: "xstocks-docs",
+      title: "xStocks documentation",
       description:
-        "1:1 backing, custody of the underlying, and proof of reserves.",
-      url: "https://docs.backed.fi",
+        "Backed's official docs: what xStocks are, how they're backed and redeemed, and the legal framework behind them.",
+      url: "https://docs.xstocks.fi/docs",
+      category: "Documentation",
+    },
+    {
+      id: "backed-issuer-site",
+      title: "Backed Assets: tokenized RWA issuer",
+      description:
+        "Backed's issuer site for its tokenized real-world assets — products, collateral, and proof of reserves.",
+      url: "https://assets.backed.fi/",
+      category: "Products",
+    },
+    {
+      id: "rwa-explained",
+      title: "Real-world assets (RWAs) explained",
+      description:
+        "Background on the broader RWA category that Backed sits in: tokenizing off-chain assets and bringing them on-chain.",
+      url: "https://chain.link/education-hub/real-world-assets-rwas-explained",
       category: "Concepts",
-      readingMinutes: 8,
     },
     {
-      id: "mint-redeem",
-      title: "Minting & redemption",
+      id: "rwa-metamask",
+      title: "What are tokenized real-world assets?",
       description:
-        "How eligible participants mint and redeem bTokens against the underlying.",
-      url: "https://docs.backed.fi",
+        "A wallet-user's guide to RWAs: legal structure, custody, risks, and the terms you'll come across.",
+      url: "https://metamask.io/news/understanding-tokenized-real-world-assets-rwa",
       category: "Concepts",
-      readingMinutes: 6,
     },
     {
-      id: "regulatory",
-      title: "Regulatory framework",
+      id: "getting-started-xstocks",
+      title: "Getting started with xStocks",
       description:
-        "The Swiss DLT framework and prospectus model Backed issues under.",
-      url: "https://docs.backed.fi",
-      category: "Compliance",
-      readingMinutes: 7,
+        "A practical guide to buying and holding Backed's tokenized stocks, including how tickers and settlement work.",
+      url: "https://support.kraken.com/articles/getting-started-with-xstocks",
+      category: "Guides",
     },
   ],
   faqs: [
