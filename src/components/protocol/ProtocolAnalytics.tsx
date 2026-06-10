@@ -3,13 +3,13 @@
 import { useState } from "react";
 import type { ProtocolConfig } from "@/protocols/types";
 import type { Breakdown, TimeRange } from "@/lib/analytics/types";
-import { formatMetricValue } from "@/lib/analytics/metrics-meta";
 import { useBreakdowns, useTimeseries } from "@/hooks/useAnalytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ProtocolSection } from "./ProtocolSection";
 import { TrendChart } from "./TrendChart";
+import { SharePieChart } from "./SharePieChart";
 import { DataProvenanceBadge } from "./DataProvenanceBadge";
 
 const RANGES: { value: TimeRange; label: string }[] = [
@@ -82,44 +82,30 @@ export function ProtocolAnalytics({
               </Card>
             ))
           : breakdowns.data?.data.map((breakdown) => (
-              <BreakdownTable key={breakdown.id} breakdown={breakdown} />
+              <BreakdownCard key={breakdown.id} breakdown={breakdown} />
             ))}
       </div>
     </ProtocolSection>
   );
 }
 
-function BreakdownTable({ breakdown }: { breakdown: Breakdown }) {
+function BreakdownCard({ breakdown }: { breakdown: Breakdown }) {
   return (
     <Card className="bg-card/60">
       <CardHeader>
         <CardTitle className="text-base font-medium">{breakdown.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-left text-xs text-muted-foreground">
-              <th className="pb-2 font-medium">Name</th>
-              <th className="pb-2 text-right font-medium">
-                {breakdown.valueHeader}
-              </th>
-              <th className="pb-2 text-right font-medium">Share</th>
-            </tr>
-          </thead>
-          <tbody>
-            {breakdown.rows.map((row) => (
-              <tr key={row.label} className="border-t border-border/60">
-                <td className="py-2">{row.label}</td>
-                <td className="py-2 text-right font-mono tabular-nums">
-                  {formatMetricValue(row.valueUsd, "currency")}
-                </td>
-                <td className="py-2 text-right font-mono tabular-nums text-muted-foreground">
-                  {row.sharePct.toFixed(1)}%
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <SharePieChart
+          data={breakdown.rows.map((row) => ({
+            label: row.label,
+            value: row.valueUsd,
+            sharePct: row.sharePct,
+          }))}
+          format="currency"
+          valueHeader={breakdown.valueHeader}
+          ariaLabel={`${breakdown.title} — share breakdown. Sample data.`}
+        />
       </CardContent>
     </Card>
   );

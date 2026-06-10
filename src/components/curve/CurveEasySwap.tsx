@@ -34,6 +34,7 @@ import {
   resetCurveNetwork,
   type CurveTokenInfo,
 } from "@/lib/curve/sdk";
+import { Tooltip, TooltipContent } from "../ui/tooltip";
 
 type Phase = "form" | "working" | "done" | "error";
 
