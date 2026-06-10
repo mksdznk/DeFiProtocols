@@ -17,7 +17,7 @@ export const aaveResources: ProtocolResources = {
       url: "https://www.youtube.com/watch?v=dTCwssZ116A",
       thumbnailUrl: "https://i3.ytimg.com/vi/dTCwssZ116A/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Aave",
+      source: "Whiteboard Crypto",
     },
     {
       id: "supplying-walkthrough",
@@ -27,7 +27,7 @@ export const aaveResources: ProtocolResources = {
       url: "https://www.youtube.com/watch?v=2DfZXOijqcw",
       thumbnailUrl: "https://i3.ytimg.com/vi/2DfZXOijqcw/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Aave",
+      source: "MoneyZG",
     },
     {
       id: "borrowing-health-factor",
@@ -37,7 +37,7 @@ export const aaveResources: ProtocolResources = {
       url: "https://www.youtube.com/watch?v=MPwNaJ9-jPc",
       thumbnailUrl: "https://i3.ytimg.com/vi/MPwNaJ9-jPc/maxresdefault.jpg",
       difficulty: "intermediate",
-      source: "Aave",
+      source: "Au Fait Films",
     },
     {
       id: "gho-explained",
@@ -47,7 +47,7 @@ export const aaveResources: ProtocolResources = {
       url: "https://www.youtube.com/watch?v=Ee4wnI1hfkQ",
       thumbnailUrl: "https://i3.ytimg.com/vi/Ee4wnI1hfkQ/maxresdefault.jpg",
       difficulty: "advanced",
-      source: "Aave",
+      source: "ETHGlobal",
     },
   ],
   articles: [

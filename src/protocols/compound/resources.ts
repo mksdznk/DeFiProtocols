@@ -3,83 +3,102 @@ import type { ProtocolResources } from "@/protocols/types";
 /**
  * Educational content for the Compound page.
  *
- * URLs point at canonical, stable destinations (compound.finance /
- * docs.compound.finance / official channels). Deep links and thumbnails should
- * be curated/verified by the content team before launch.
+ * Links are real, verified destinations: Compound's official Compound III docs,
+ * a reputable explainer (Gemini), a beginner guide (Coin Bureau), and
+ * walkthrough videos (Finematics and community creators) covering both the
+ * concepts and how to actually supply, earn, and borrow.
  */
 export const compoundResources: ProtocolResources = {
   videos: [
     {
-      id: "what-is-compound",
-      title: "What is Compound?",
+      id: "lending-borrowing-explained",
+      title: "Lending & borrowing in DeFi explained",
       description:
-        "An introduction to Compound as an algorithmic, non-custodial money market.",
-      url: "https://www.youtube.com/@compoundfinance",
+        "An animated primer on how DeFi money markets like Compound let you earn interest or borrow against collateral.",
+      url: "https://www.youtube.com/watch?v=aTp9er6S73M",
+      thumbnailUrl: "https://i3.ytimg.com/vi/aTp9er6S73M/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Compound",
+      source: "Finematics",
     },
     {
-      id: "supplying-walkthrough",
-      title: "Supplying assets to earn interest",
+      id: "borrow-lend-easy-guide",
+      title: "How to borrow & lend crypto on Compound",
       description:
-        "How to connect a wallet and supply the base asset to start earning.",
-      url: "https://www.youtube.com/@compoundfinance",
+        "A beginner-friendly walkthrough of connecting a wallet and supplying or borrowing on Compound.",
+      url: "https://www.youtube.com/watch?v=o3Qp7N4DzzU",
+      thumbnailUrl: "https://i3.ytimg.com/vi/o3Qp7N4DzzU/maxresdefault.jpg",
       difficulty: "beginner",
-      source: "Compound",
+      source: "Krypto Cove",
     },
     {
-      id: "borrowing-compound-iii",
-      title: "Borrowing on Compound III",
+      id: "compound-v3-tutorial",
+      title: "How to use Compound v3 (Comet)",
       description:
-        "How collateral and the single base-asset model work in Compound III.",
-      url: "https://www.youtube.com/@compoundfinance",
+        "A hands-on tutorial of the current Compound III interface: the base asset, collateral, and earning.",
+      url: "https://www.youtube.com/watch?v=6O3YpZc202Q",
+      thumbnailUrl: "https://i3.ytimg.com/vi/6O3YpZc202Q/maxresdefault.jpg",
       difficulty: "intermediate",
-      source: "Compound",
+      source: "MoneyZG",
     },
     {
-      id: "comp-governance",
-      title: "COMP and governance",
+      id: "lend-earn-passive-income",
+      title: "Lending to earn passive DeFi income",
       description:
-        "How COMP holders propose and vote on changes to the protocol.",
-      url: "https://www.youtube.com/@compoundfinance",
-      difficulty: "advanced",
-      source: "Compound",
+        "How supplying assets like DAI and ETH on Compound earns interest over time.",
+      url: "https://www.youtube.com/watch?v=K5WD_jmyKoA",
+      thumbnailUrl: "https://i3.ytimg.com/vi/K5WD_jmyKoA/maxresdefault.jpg",
+      difficulty: "intermediate",
+      source: "IMineBlocks",
     },
   ],
   articles: [
     {
-      id: "what-is-compound-doc",
-      title: "What is Compound?",
-      description: "Overview of the protocol and the problems it solves.",
-      url: "https://docs.compound.finance",
+      id: "compound-lego-blocks",
+      title: "Compound Finance: lego blocks of DeFi",
+      description:
+        "A clear introduction to Compound — supplying, borrowing, cTokens, and algorithmic interest rates.",
+      url: "https://www.gemini.com/cryptopedia/compound-finance-defi-crypto",
       category: "Introduction",
-      readingMinutes: 5,
     },
     {
-      id: "compound-iii",
-      title: "How Compound III works",
+      id: "compound-iii-docs",
+      title: "Compound III documentation",
       description:
-        "The single base-asset model, collateral assets, and account health.",
-      url: "https://docs.compound.finance",
+        "Compound's official docs: the single base-asset model, supplying to earn, and how the protocol works.",
+      url: "https://docs.compound.finance/",
+      category: "Documentation",
+    },
+    {
+      id: "collateral-and-borrowing",
+      title: "Collateral & borrowing",
+      description:
+        "How collateral assets back a borrow of the base asset, and how borrowing capacity is calculated.",
+      url: "https://docs.compound.finance/collateral-and-borrowing/",
       category: "Concepts",
-      readingMinutes: 8,
     },
     {
-      id: "liquidations",
-      title: "Borrowing & liquidations",
+      id: "liquidation",
+      title: "Liquidation",
       description:
-        "Borrow capacity, liquidation, and how to keep a position safe.",
-      url: "https://docs.compound.finance",
+        "What makes a position liquidatable, how liquidation works, and how to keep an account healthy.",
+      url: "https://docs.compound.finance/liquidation/",
       category: "Risk",
-      readingMinutes: 7,
     },
     {
       id: "governance-doc",
       title: "COMP governance",
-      description: "How proposals are made, voted on, and executed on-chain.",
-      url: "https://docs.compound.finance",
+      description:
+        "How COMP holders propose, vote on, and execute changes to the protocol on-chain.",
+      url: "https://docs.compound.finance/governance/",
       category: "Governance",
-      readingMinutes: 6,
+    },
+    {
+      id: "compound-beginners-guide",
+      title: "Compound Finance: a beginner's guide",
+      description:
+        "A practical guide to lending and borrowing on Compound, with tips for getting started safely.",
+      url: "https://coinbureau.com/guides/compound-finance-beginners",
+      category: "Guides",
     },
   ],
   faqs: [

@@ -18,7 +18,7 @@ export const lifiResources: ProtocolResources = {
       url: "https://www.youtube.com/watch?v=c0g81uK8BWE&t=651s",
       thumbnailUrl: "https://i3.ytimg.com/vi/c0g81uK8BWE/maxresdefault.jpg",
       difficulty: "intermediate",
-      source: "LI.FI",
+      source: "ETHGlobal",
     },
     {
       id: "bridging-walkthrough",
