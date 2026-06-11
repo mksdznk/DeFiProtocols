@@ -8,6 +8,12 @@ import type {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProtocolSection } from "./ProtocolSection";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const DIFFICULTY_LABEL: Record<ResourceDifficulty, string> = {
   beginner: "Beginner",
@@ -103,22 +109,30 @@ export function ProtocolResources({
     <ProtocolSection
       id={id}
       title={title}
-      description={`Learn how ${config.name} works before you use it.`}
     >
-      {videos.length > 0 && (
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
-          ))}
-        </div>
-      )}
-      {articles.length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {articles.map((article) => (
-            <ArticleRow key={article.id} article={article} />
-          ))}
-        </div>
-      )}
+      <Accordion type="single" collapsible className="w-full pt-0">
+        <AccordionItem value={`Learn how ${config.name} works before you use it.`}>
+          <AccordionTrigger className="text-left text-base">
+            {`Learn how ${config.name} works before you use it.`}
+          </AccordionTrigger>
+          <AccordionContent className="text-muted-foreground">
+            {videos.length > 0 && (
+              <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {videos.map((video) => (
+                  <VideoCard key={video.id} video={video} />
+                ))}
+              </div>
+            )}
+            {articles.length > 0 && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {articles.map((article) => (
+                  <ArticleRow key={article.id} article={article} />
+                ))}
+              </div>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </ProtocolSection>
   );
 }
