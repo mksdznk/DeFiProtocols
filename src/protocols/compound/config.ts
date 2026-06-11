@@ -25,6 +25,7 @@ export const compoundConfig: ProtocolConfig = {
   },
   links: {
     website: "https://compound.finance",
+    app: "https://app.compound.finance/?market=usdc-mainnet",
     docs: "https://docs.compound.finance",
     twitter: "https://x.com/compoundfinance",
     github: "https://github.com/compound-finance",
@@ -121,10 +122,12 @@ export const compoundConfig: ProtocolConfig = {
   interaction: { kind: "compound-sdk" },
   sections: [
     { type: "beginner" },
-    { type: "interaction" },
-    { type: "overview" },
-    { type: "metrics" },
+    // Interaction panel and the headline metrics sit side by side on wide
+    // screens (they stack on small ones).
+    { type: "interaction", width: "half" },
+    { type: "metrics", width: "half" },
     { type: "analytics" },
+    { type: "overview" },
     { type: "integrations" },
     { type: "resources" },
     { type: "security" },

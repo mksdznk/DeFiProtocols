@@ -26,6 +26,7 @@ export const aaveConfig: ProtocolConfig = {
   },
   links: {
     website: "https://aave.com",
+    app: "https://app.aave.com",
     docs: "https://docs.aave.com",
     twitter: "https://x.com/aave",
     github: "https://github.com/aave",
@@ -125,10 +126,12 @@ export const aaveConfig: ProtocolConfig = {
   interaction: { kind: "aave-sdk" },
   sections: [
     { type: "beginner" },
-    { type: "interaction" },
-    { type: "overview" },
-    { type: "metrics" },
+    // Interaction panel and the headline metrics sit side by side on wide
+    // screens (they stack on small ones).
+    { type: "interaction", width: "half" },
+    { type: "metrics", width: "half" },
     { type: "analytics" },
+    { type: "overview" },
     { type: "integrations" },
     { type: "resources" },
     { type: "security" },

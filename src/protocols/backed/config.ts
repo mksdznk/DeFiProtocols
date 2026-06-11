@@ -26,6 +26,7 @@ export const backedConfig: ProtocolConfig = {
   },
   links: {
     website: "https://backed.fi",
+    app: "https://defi.xstocks.fi/",
     docs: "https://docs.backed.fi",
     twitter: "https://x.com/backed_fi",
     github: "https://github.com/backed-fi",
@@ -119,10 +120,12 @@ export const backedConfig: ProtocolConfig = {
   },
   sections: [
     { type: "beginner" },
-    { type: "interaction" },
-    { type: "overview" },
-    { type: "metrics" },
+    // Interaction panel and the headline metrics sit side by side on wide
+    // screens (they stack on small ones).
+    { type: "interaction", width: "half" },
+    { type: "metrics", width: "half" },
     { type: "analytics" },
+    { type: "overview" },
     { type: "integrations" },
     { type: "resources" },
     { type: "security" },

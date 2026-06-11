@@ -28,6 +28,12 @@ export interface SectionConfig {
   enabled?: boolean;
   /** Optional override for the section heading. */
   title?: string;
+  /**
+   * Column width within the page. Defaults to `"full"` (its own row). Two
+   * consecutive `"half"` sections pair up side by side on wide screens (and
+   * stack on small ones), e.g. the interaction panel beside the key metrics.
+   */
+  width?: "full" | "half";
 }
 
 export interface ProtocolBranding {
@@ -43,6 +49,7 @@ export interface ProtocolBranding {
 
 export interface ProtocolLinks {
   website?: string;
+  app?: string;
   docs?: string;
   twitter?: string;
   github?: string;

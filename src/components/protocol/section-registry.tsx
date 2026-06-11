@@ -36,7 +36,7 @@ export const SECTION_REGISTRY: Record<SectionType, SectionMeta> = {
   },
   interaction: {
     id: "interact",
-    title: "Swap & bridge",
+    title: "Interact with protocol",
     Component: ProtocolInteractionPanel,
   },
   overview: { id: "overview", title: "Overview", Component: ProtocolOverview },
@@ -56,6 +56,8 @@ export interface ProtocolNavItem {
   type: SectionType;
   id: string;
   title: string;
+  /** Column width within the page layout ("full" | "half"). */
+  width: "full" | "half";
 }
 
 /** Ordered, enabled sections with resolved id/title — used by renderer & nav. */
@@ -68,6 +70,7 @@ export function getProtocolNavItems(config: ProtocolConfig): ProtocolNavItem[] {
         type: section.type,
         id: meta.id,
         title: section.title ?? meta.title,
+        width: section.width ?? "full",
       };
     });
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, AtSign, BookText, Code, Globe } from "lucide-react";
+import { ArrowUpRight, AtSign, BookText, Code, Globe, Coins } from "lucide-react";
 import type { ProtocolConfig } from "@/protocols/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ const LINK_META: {
   icon: typeof Globe;
 }[] = [
   { key: "website", label: "Website", icon: Globe },
+  { key: "app", label: "App", icon: Coins },
   { key: "docs", label: "Docs", icon: BookText },
   { key: "twitter", label: "X", icon: AtSign },
   { key: "github", label: "GitHub", icon: Code },

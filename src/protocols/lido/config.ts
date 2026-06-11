@@ -27,6 +27,7 @@ export const lidoConfig: ProtocolConfig = {
   },
   links: {
     website: "https://lido.fi",
+    app: "https://stake.lido.fi/",
     docs: "https://docs.lido.fi",
     twitter: "https://x.com/LidoFinance",
     github: "https://github.com/lidofinance",
@@ -116,10 +117,12 @@ export const lidoConfig: ProtocolConfig = {
   interaction: { kind: "lido-sdk" },
   sections: [
     { type: "beginner" },
-    { type: "interaction" },
-    { type: "overview" },
-    { type: "metrics" },
+    // Interaction panel and the headline metrics sit side by side on wide
+    // screens (they stack on small ones).
+    { type: "interaction", width: "half" },
+    { type: "metrics", width: "half" },
     { type: "analytics" },
+    { type: "overview" },
     { type: "integrations" },
     { type: "resources" },
     { type: "security" },

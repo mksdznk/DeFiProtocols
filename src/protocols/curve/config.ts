@@ -126,10 +126,12 @@ export const curveConfig: ProtocolConfig = {
   interaction: { kind: "curve-sdk" },
   sections: [
     { type: "beginner" },
-    { type: "interaction" },
-    { type: "overview" },
-    { type: "metrics" },
+    // Interaction panel and the headline metrics sit side by side on wide
+    // screens (they stack on small ones).
+    { type: "interaction", width: "half" },
+    { type: "metrics", width: "half" },
     { type: "analytics" },
+    { type: "overview" },
     { type: "integrations" },
     { type: "resources" },
     { type: "security" },

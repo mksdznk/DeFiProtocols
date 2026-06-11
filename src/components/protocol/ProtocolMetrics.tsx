@@ -33,7 +33,10 @@ export function ProtocolMetrics({
       title={title}
       headerAside={data && <DataProvenanceBadge provenance={data} />}
     >
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      {/* Container-query grid: adapts to the section's own width, so it reads
+          well whether full-width or paired beside another half-width section. */}
+      <div className="@container">
+        <div className="grid grid-cols-2 gap-3 @sm:grid-cols-3 @3xl:grid-cols-6">
         {config.metricKeys.map((key) => {
           const meta = METRIC_META[key];
           const metric = byKey.get(key);
@@ -50,6 +53,7 @@ export function ProtocolMetrics({
             />
           );
         })}
+        </div>
       </div>
     </ProtocolSection>
   );

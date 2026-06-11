@@ -26,6 +26,7 @@ export const maverickConfig: ProtocolConfig = {
   },
   links: {
     website: "https://mav.xyz",
+    app: "https://app.mav.xyz",
     docs: "https://docs.mav.xyz",
     twitter: "https://x.com/mavprotocol",
     github: "https://github.com/maverickprotocol",
@@ -118,10 +119,12 @@ export const maverickConfig: ProtocolConfig = {
   interaction: { kind: "maverick-sdk" },
   sections: [
     { type: "beginner" },
-    { type: "interaction" },
-    { type: "overview" },
-    { type: "metrics" },
+    // Interaction panel and the headline metrics sit side by side on wide
+    // screens (they stack on small ones).
+    { type: "interaction", width: "half" },
+    { type: "metrics", width: "half" },
     { type: "analytics" },
+    { type: "overview" },
     { type: "integrations" },
     { type: "resources" },
     { type: "security" },
