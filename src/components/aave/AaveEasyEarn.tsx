@@ -34,7 +34,10 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FieldTooltip } from "@/components/shared/FieldTooltip";
+import { TestnetToggle } from "@/components/shared/TestnetToggle";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
+import { useTestnetMode } from "@/hooks/useTestnetMode";
+import { AaveSepoliaEarn } from "./AaveSepoliaEarn";
 
 // Placeholder used only while a read is paused (no real query is sent).
 const ZERO = "0x0000000000000000000000000000000000000000";
@@ -48,6 +51,14 @@ type Phase = "form" | "supplying" | "done" | "error";
  * production API; the deposit executes through the same wallet the page uses.
  */
 export function AaveEasyEarn() {
+  const { isTestnet } = useTestnetMode();
+  // Aave's unified SDK/API has no usable public testnet (only an internal
+  // devnet), so testnet mode uses a direct-contract Sepolia surface instead.
+  if (isTestnet) return <AaveSepoliaEarn />;
+  return <AaveMainnetEarn />;
+}
+
+function AaveMainnetEarn() {
   // The SDK client is created once and provided to the Aave hooks below.
   const [client] = useState(() => AaveClient.create({ environment: production }));
   return (
@@ -72,7 +83,7 @@ function EarnUI() {
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  // Supported networks, straight from Aave.
+  // Supported networks, straight from Aave (mainnet markets via the SDK).
   const { data: chains, loading: chainsLoading } = useChains();
   const networks = chains ?? [];
   const activeChainId = chainOverride ?? networks[0]?.chainId;
@@ -188,10 +199,13 @@ function EarnUI() {
       <Card className="bg-card/60">
         <CardContent className="space-y-4">
           <div className="space-y-1">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-protocol">
-              <Sparkles className="size-4" aria-hidden />
-              Earn on your crypto
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-protocol">
+                <Sparkles className="size-4" aria-hidden />
+                Earn on your crypto
+              </p>
+              <TestnetToggle network="Sepolia" />
+            </div>
             <p className="text-sm text-muted-foreground">
               Deposit a coin and earn interest over time. You can take it out
               whenever you like — no borrowing, no lock-up.

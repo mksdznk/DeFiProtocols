@@ -3,6 +3,7 @@ import {
   arbitrum,
   base,
   bsc,
+  hoodi,
   hyperEvm,
   ink,
   mainnet,
@@ -33,7 +34,10 @@ export const chains = [
   mantle,
   hyperEvm,
   ink,
+  // Testnets (opt-in via the in-app "Testnet" toggle): Sepolia for Aave &
+  // Compound, Hoodi for Lido staking.
   sepolia,
+  hoodi,
 ] as const;
 
 /** Union of the chain ids wagmi is configured for (used to type chainId args). */
@@ -77,6 +81,8 @@ export const RPC_URLS: Record<number, string> = {
     process.env.NEXT_PUBLIC_RPC_HYPEREVM ?? "https://rpc.hyperliquid.xyz/evm",
   [ink.id]:
     process.env.NEXT_PUBLIC_RPC_INK ?? "https://rpc-gel.inkonchain.com",
+  [hoodi.id]:
+    process.env.NEXT_PUBLIC_RPC_HOODI ?? "https://ethereum-hoodi-rpc.publicnode.com",
 };
 
 /**
@@ -116,6 +122,7 @@ export function getConfig() {
       [hyperEvm.id]: http(RPC_URLS[hyperEvm.id]),
       [ink.id]: http(RPC_URLS[ink.id]),
       [sepolia.id]: http(RPC_URLS[sepolia.id]),
+      [hoodi.id]: http(RPC_URLS[hoodi.id]),
     },
   });
 }

@@ -10,7 +10,6 @@ import {
   Wallet,
 } from "lucide-react";
 import { parseUnits } from "viem";
-import { arbitrum, base, mainnet, polygon, avalancheFuji, hardhat, linea, mantle, optimism, ronin, scroll, sepolia, unichain } from "viem/chains";
 import {
   useAccount,
   useChainId,
@@ -32,28 +31,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { FieldTooltip } from "@/components/shared/FieldTooltip";
 import { TestnetToggle } from "@/components/shared/TestnetToggle";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
-import { cometAbi, erc20Abi } from "@/lib/compound/markets";
-import { useTestnetMode } from "@/hooks/useTestnetMode";
 import {
-  useCompoundMarkets,
-  type CompoundMarket,
-} from "@/hooks/useCompoundMarkets";
-
-// Network metadata (name + explorer) derived from viem's chain objects.
-const VIEM_CHAINS = [mainnet, base, arbitrum, polygon, avalancheFuji, hardhat, linea, mantle, optimism, ronin, scroll, sepolia, unichain];
-function chainOf(id: number) {
-  return VIEM_CHAINS.find((c) => c.id === id);
-}
+  AAVE_SEPOLIA_CHAIN_ID,
+  AAVE_SEPOLIA_POOL,
+  aaveErc20Abi,
+  aavePoolAbi,
+} from "@/lib/aave/sepolia";
+import { useAaveSepoliaReserves } from "@/hooks/useAaveSepoliaReserves";
 
 type Phase = "form" | "working" | "done" | "error";
 
+const EXPLORER = "https://sepolia.etherscan.io";
+
 /**
- * Compound "Easy Earn": a beginner-friendly Supply & Earn on Compound III.
- * Supplying a market's base coin earns interest with no borrowing or liquidation
- * risk. Markets, tokens, and live APYs are read straight from the Comet
- * contracts; the deposit (approve + supply) runs through the connected wallet.
+ * Aave "Easy Earn" on the Sepolia testnet, built on the v3 Pool contract (the
+ * SDK has no public testnet). Same friendly supply flow as mainnet — pick a
+ * coin, deposit, earn — but with faucet test tokens and no real money at risk.
  */
-export function CompoundEasyEarn() {
+export function AaveSepoliaEarn() {
   const { address, isConnected } = useAccount();
   const currentChainId = useChainId();
   const config = useConfig();
@@ -61,88 +56,73 @@ export function CompoundEasyEarn() {
   const { writeContractAsync } = useWriteContract();
 
   const [connectOpen, setConnectOpen] = useState(false);
-  const [selectedChainId, setSelectedChainId] = useState<number | null>(null);
-  const [selectedComet, setSelectedComet] = useState<string>("");
+  const [assetAddr, setAssetAddr] = useState<string>("");
   const [amount, setAmount] = useState("");
   const [phase, setPhase] = useState<Phase>("form");
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  const { isTestnet } = useTestnetMode();
-  const { data: markets, isPending } = useCompoundMarkets(isTestnet);
-  const sorted = (markets ?? []).slice().sort((a, b) => b.apy - a.apy);
-
-  // Networks available, derived from the markets (no hardcoded chain list).
-  const chainIds = [...new Set((markets ?? []).map((m) => m.chainId))];
-  // Fall back to the first available chain if the saved one isn't in the current
-  // (mainnet/testnet) market set — so toggling testnet never strands the form.
-  const activeChainId =
-    selectedChainId &&
-    chainIds.includes(selectedChainId as (typeof chainIds)[number])
-      ? selectedChainId
-      : chainIds[0];
-
-  // Coins available on the active network.
-  const coins = sorted.filter((m) => m.chainId === activeChainId);
-  const market = coins.find((m) => m.comet === selectedComet) ?? coins[0];
+  const { data: reserves, isPending } = useAaveSepoliaReserves();
+  const list = reserves ?? [];
+  const selected = list.find((r) => r.asset === assetAddr) ?? list[0];
 
   const amountNumber = Number(amount);
   const validAmount = /^\d*\.?\d*$/.test(amount) && amountNumber > 0;
   const yearlyEarnings =
-    validAmount && market ? (amountNumber * market.apy) / 100 : 0;
+    validAmount && selected ? (amountNumber * selected.apy) / 100 : 0;
 
   async function handleSupply() {
-    if (!market || !address || !validAmount) return;
+    if (!selected || !address || !validAmount) return;
     setPhase("working");
     setTxHash(null);
     try {
-      const amountWei = parseUnits(amount, market.decimals);
+      const amountWei = parseUnits(amount, selected.decimals);
 
-      if (currentChainId !== market.chainId) {
-        setStatusMsg("Switch network in your wallet…");
-        await switchChainAsync({ chainId: market.chainId });
+      if (currentChainId !== AAVE_SEPOLIA_CHAIN_ID) {
+        setStatusMsg("Switch to Sepolia in your wallet…");
+        await switchChainAsync({ chainId: AAVE_SEPOLIA_CHAIN_ID });
       }
 
       const allowance = (await readContract(config, {
-        address: market.baseToken,
-        abi: erc20Abi,
+        address: selected.asset,
+        abi: aaveErc20Abi,
         functionName: "allowance",
-        args: [address, market.comet],
-        chainId: market.chainId,
+        args: [address, AAVE_SEPOLIA_POOL],
+        chainId: AAVE_SEPOLIA_CHAIN_ID,
       })) as bigint;
 
       if (allowance < amountWei) {
-        setStatusMsg(`Approve ${market.symbol} in your wallet…`);
+        setStatusMsg(`Approve ${selected.symbol} in your wallet…`);
         const approveHash = await writeContractAsync({
-          address: market.baseToken,
-          abi: erc20Abi,
+          address: selected.asset,
+          abi: aaveErc20Abi,
           functionName: "approve",
-          args: [market.comet, amountWei],
-          chainId: market.chainId,
+          args: [AAVE_SEPOLIA_POOL, amountWei],
+          chainId: AAVE_SEPOLIA_CHAIN_ID,
         });
         await waitForTransactionReceipt(config, {
           hash: approveHash,
-          chainId: market.chainId,
+          chainId: AAVE_SEPOLIA_CHAIN_ID,
         });
       }
 
       setStatusMsg("Confirm the deposit in your wallet…");
       const supplyHash = await writeContractAsync({
-        address: market.comet,
-        abi: cometAbi,
+        address: AAVE_SEPOLIA_POOL,
+        abi: aavePoolAbi,
         functionName: "supply",
-        args: [market.baseToken, amountWei],
-        chainId: market.chainId,
+        args: [selected.asset, amountWei, address, 0],
+        chainId: AAVE_SEPOLIA_CHAIN_ID,
       });
       setStatusMsg("Finishing your deposit…");
       await waitForTransactionReceipt(config, {
         hash: supplyHash,
-        chainId: market.chainId,
+        chainId: AAVE_SEPOLIA_CHAIN_ID,
       });
       setTxHash(supplyHash);
       setPhase("done");
     } catch (err) {
-      setStatusMsg(friendlyError(err, market.symbol));
+      setStatusMsg(friendlyError(err, selected.symbol));
       setPhase("error");
     }
   }
@@ -161,8 +141,7 @@ export function CompoundEasyEarn() {
           phase={phase}
           message={statusMsg}
           txHash={txHash}
-          token={market?.symbol}
-          explorer={market ? chainOf(market.chainId)?.blockExplorers?.default?.url : undefined}
+          token={selected?.symbol}
           onReset={reset}
         />
       </div>
@@ -182,113 +161,91 @@ export function CompoundEasyEarn() {
               <TestnetToggle network="Sepolia" />
             </div>
             <p className="text-sm text-muted-foreground">
-              Deposit a coin and earn interest over time. You can take it out
-              whenever you like — no borrowing, no lock-up.
+              Deposit a test coin and earn interest on Aave v3 (Sepolia). Grab
+              test tokens from the Aave faucet first — no real money is involved.
             </p>
           </div>
 
-          {/* Network */}
-          <Field label="Network">
-            {isPending && chainIds.length === 0 ? (
-              <Skeleton className="h-9 w-full" />
-            ) : (
-              <Select
-                value={activeChainId ? String(activeChainId) : ""}
-                onValueChange={(v) => {
-                  setSelectedChainId(Number(v));
-                  setSelectedComet("");
-                }}
+          {/* Network (fixed: Sepolia) */}
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Network</p>
+            <div className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-3 py-2">
+              <span className="text-sm font-medium">Sepolia</span>
+              <a
+                href="https://app.aave.com/faucet/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
-                <FieldTooltip label="The network this Compound market is on">
-                  <SelectTrigger className="w-full" aria-label="Network">
-                    <SelectValue placeholder="Choose a network" />
-                  </SelectTrigger>
-                </FieldTooltip>
-                <SelectContent>
-                  {chainIds.map((id) => (
-                    <SelectItem key={id} value={String(id)}>
-                      {chainOf(id)?.name ?? `Chain ${id}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </Field>
+                Faucet
+                <ExternalLink className="size-3" aria-hidden />
+              </a>
+            </div>
+          </div>
 
           {/* Coin */}
-          <Field label="Coin to deposit">
-            {isPending && sorted.length === 0 ? (
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">
+              Coin to deposit
+            </p>
+            {isPending && list.length === 0 ? (
               <Skeleton className="h-9 w-full" />
-            ) : coins.length === 0 ? (
+            ) : list.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No coins available on this network right now.
+                No reserves available right now.
               </p>
             ) : (
               <Select
-                value={market?.comet ?? ""}
-                onValueChange={setSelectedComet}
+                value={selected?.asset ?? ""}
+                onValueChange={setAssetAddr}
               >
-                <FieldTooltip label="The coin you'll deposit to earn interest">
+                <FieldTooltip label="The test coin you'll deposit to earn interest">
                   <SelectTrigger className="w-full" aria-label="Coin to deposit">
                     <SelectValue />
                   </SelectTrigger>
                 </FieldTooltip>
                 <SelectContent>
-                  {coins.map((m) => (
-                    <SelectItem key={m.comet} value={m.comet}>
-                      {m.symbol} — earn {m.apy.toFixed(2)}% / year
+                  {list.map((r) => (
+                    <SelectItem key={r.asset} value={r.asset}>
+                      {r.symbol} — earn {r.apy.toFixed(2)}% / year
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             )}
-          </Field>
+          </div>
 
           {/* Amount */}
-          <Field label="Amount">
+          <div className="space-y-1.5">
+            <p className="text-xs font-medium text-muted-foreground">Amount</p>
             <div className="flex items-center gap-2 rounded-lg border border-border bg-background/60 px-3">
               <input
                 inputMode="decimal"
                 placeholder="0"
                 value={amount}
                 onChange={(e) => {
-                  if (/^\d*\.?\d*$/.test(e.target.value))
-                    setAmount(e.target.value);
+                  if (/^\d*\.?\d*$/.test(e.target.value)) setAmount(e.target.value);
                 }}
                 aria-label="Amount to deposit"
                 className="w-full bg-transparent py-2.5 text-2xl font-semibold tabular-nums outline-none placeholder:text-muted-foreground/40"
               />
               <span className="text-sm font-medium text-muted-foreground">
-                {market?.symbol}
+                {selected?.symbol ?? ""}
               </span>
             </div>
-          </Field>
+          </div>
 
           {/* Plain-language earnings */}
           <div className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
-            {market ? (
-              validAmount ? (
-                <p>
-                  At today&apos;s rate of{" "}
-                  <span className="font-medium">{market.apy.toFixed(2)}%</span>,
-                  you&apos;d earn about{" "}
-                  <span className="font-medium">
-                    {yearlyEarnings.toLocaleString("en-US", {
-                      maximumFractionDigits: yearlyEarnings < 1 ? 4 : 2,
-                    })}{" "}
-                    {market.symbol}
-                  </span>{" "}
-                  per year.
-                </p>
-              ) : (
-                <p className="text-muted-foreground">
-                  Enter an amount to see what you&apos;d earn at{" "}
-                  {market.apy.toFixed(2)}% / year.
-                </p>
-              )
+            {selected && validAmount ? (
+              <p>
+                You&apos;ll earn about{" "}
+                <span className="font-medium">{selected.apy.toFixed(2)}%</span> per
+                year — roughly {formatAmount(yearlyEarnings)} {selected.symbol}.
+              </p>
             ) : (
               <p className="text-muted-foreground">
-                Pick a coin to see how much you can earn.
+                Enter an amount to see what you&apos;ll earn.
               </p>
             )}
           </div>
@@ -306,35 +263,19 @@ export function CompoundEasyEarn() {
             <Button
               size="lg"
               className="w-full"
-              disabled={!market || !validAmount}
+              disabled={!validAmount || !selected}
               onClick={handleSupply}
             >
-              {validAmount ? `Deposit ${market?.symbol ?? ""}` : "Enter an amount"}
+              {validAmount ? "Deposit" : "Enter an amount"}
             </Button>
           )}
 
           <p className="text-center text-xs text-muted-foreground">
-            You stay in control — nothing moves until you approve it in your
-            wallet, and you can withdraw anytime.
+            Testnet only — nothing moves until you approve it in your wallet.
           </p>
         </CardContent>
       </Card>
       <ConnectModal open={connectOpen} onOpenChange={setConnectOpen} />
-    </div>
-  );
-}
-
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      {children}
     </div>
   );
 }
@@ -344,17 +285,15 @@ function ResultPanel({
   message,
   txHash,
   token,
-  explorer,
   onReset,
 }: {
   phase: Phase;
   message: string | null;
   txHash: string | null;
   token?: string;
-  explorer?: string;
   onReset: () => void;
 }) {
-  const txLink = txHash && explorer ? `${explorer}/tx/${txHash}` : null;
+  const txLink = txHash ? `${EXPLORER}/tx/${txHash}` : null;
   return (
     <Card className="bg-card/60">
       <CardContent className="flex flex-col items-center gap-4 py-10 text-center">
@@ -364,8 +303,8 @@ function ResultPanel({
             <div className="space-y-1">
               <h3 className="text-lg font-semibold">You&apos;re earning! 🎉</h3>
               <p className="text-sm text-muted-foreground">
-                Your {token ?? "deposit"} is now earning interest. You can
-                withdraw it whenever you like.
+                Your {token ?? "deposit"} is now supplied on Aave (Sepolia) and
+                earning interest.
               </p>
             </div>
           </>
@@ -409,7 +348,7 @@ function ResultPanel({
             onClick={onReset}
             variant={phase === "done" ? "default" : "outline"}
           >
-            {phase === "done" ? "Make another deposit" : "Try again"}
+            {phase === "done" ? "Deposit more" : "Try again"}
           </Button>
         )}
       </CardContent>
@@ -417,16 +356,20 @@ function ResultPanel({
   );
 }
 
+function formatAmount(value: number): string {
+  if (!Number.isFinite(value)) return "0";
+  const maxFrac = value < 1 ? 6 : value < 1000 ? 4 : 2;
+  return value.toLocaleString("en-US", { maximumFractionDigits: maxFrac });
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function friendlyError(err: any, symbol?: string): string {
+function friendlyError(err: any, token: string): string {
   const msg = String(err?.shortMessage ?? err?.message ?? err ?? "");
   if (/reject|denied|cancell?ed|user/i.test(msg)) {
     return "You cancelled the request in your wallet.";
   }
-  if (/insufficient|exceeds balance|transfer amount/i.test(msg)) {
-    return `You don't have enough ${symbol ?? "of that coin"} for this deposit.`;
+  if (/insufficient|balance|funds|transfer amount exceeds/i.test(msg)) {
+    return `Not enough ${token} — grab some from the Aave faucet first.`;
   }
   return "Something went wrong. Please try again.";
 }
-
-export type { CompoundMarket };

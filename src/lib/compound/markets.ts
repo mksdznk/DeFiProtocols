@@ -1,4 +1,4 @@
-import { arbitrum, base, mainnet, optimism, polygon } from "wagmi/chains";
+import { arbitrum, base, mainnet, optimism, polygon, sepolia } from "wagmi/chains";
 import type { SupportedChainId } from "@/lib/wagmi";
 
 /**
@@ -36,8 +36,25 @@ interface AggregatorOutput {
   markets?: Record<string, Record<string, AggregatorMarket>>;
 }
 
-/** Fetch the current Compound III market list (Comet addresses) per chain. */
-export async function fetchCometMarkets(): Promise<CometMarket[]> {
+/**
+ * Compound III testnet markets (Sepolia). The aggregator only lists mainnet
+ * deployments, so the test market is named here; everything else (base token,
+ * symbol, APY) is still read live from the Comet contract, same as mainnet.
+ */
+const TESTNET_MARKETS: CometMarket[] = [
+  // cUSDCv3 on Sepolia (base asset: USDC). Faucet via app.compound.finance.
+  { chainId: sepolia.id, comet: "0xAec1F48e02Cfb822Be958B68C7957156EB3F0b6e" },
+];
+
+/**
+ * Fetch the current Compound III market list (Comet addresses) per chain.
+ * In testnet mode, returns the test deployments instead of the mainnet markets.
+ */
+export async function fetchCometMarkets(
+  testnet = false,
+): Promise<CometMarket[]> {
+  if (testnet) return TESTNET_MARKETS;
+
   const res = await fetch(MARKETS_SOURCE_URL);
   if (!res.ok) {
     throw new Error(`Failed to load Compound markets (${res.status})`);

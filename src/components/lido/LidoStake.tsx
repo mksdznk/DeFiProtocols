@@ -9,16 +9,18 @@ import {
   Sparkles,
   Wallet,
 } from "lucide-react";
-import { mainnet } from "viem/chains";
 import { useAccount, useChainId, useSwitchChain, useWalletClient } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
+import type { SupportedChainId } from "@/lib/wagmi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ConnectModal } from "@/components/wallet/ConnectModal";
+import { TestnetToggle } from "@/components/shared/TestnetToggle";
+import { useTestnetMode } from "@/hooks/useTestnetMode";
 import {
   getLidoApr,
-  LIDO_CHAIN_ID,
-  LIDO_NETWORKS,
+  lidoExplorer,
+  lidoNetwork,
   stakeEth,
 } from "@/lib/lido/sdk";
 
@@ -34,6 +36,7 @@ export function LidoStake() {
   const currentChainId = useChainId();
   const { switchChainAsync } = useSwitchChain();
   const { data: walletClient } = useWalletClient();
+  const { isTestnet } = useTestnetMode();
 
   const [connectOpen, setConnectOpen] = useState(false);
   const [amount, setAmount] = useState("");
@@ -41,31 +44,31 @@ export function LidoStake() {
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
 
+  const network = lidoNetwork(isTestnet);
+
   const aprQuery = useQuery({
-    queryKey: ["lido", "apr"],
-    queryFn: getLidoApr,
+    queryKey: ["lido", "apr", isTestnet ? "testnet" : "mainnet"],
+    queryFn: () => getLidoApr(isTestnet),
     staleTime: 5 * 60_000,
   });
-  const apr = aprQuery.data;
+  const apr = aprQuery.data ?? null;
 
   const amountNumber = Number(amount);
   const validAmount = /^\d*\.?\d*$/.test(amount) && amountNumber > 0;
   const yearlyEarnings =
     validAmount && apr != null ? (amountNumber * apr) / 100 : 0;
 
-  const network = LIDO_NETWORKS[0];
-
   async function handleStake() {
     if (!isConnected || !walletClient || !validAmount) return;
     setPhase("working");
     setTxHash(null);
     try {
-      if (currentChainId !== LIDO_CHAIN_ID) {
-        setStatusMsg("Switch to Ethereum in your wallet…");
-        await switchChainAsync({ chainId: LIDO_CHAIN_ID });
+      if (currentChainId !== network.chainId) {
+        setStatusMsg(`Switch to ${network.name} in your wallet…`);
+        await switchChainAsync({ chainId: network.chainId as SupportedChainId });
       }
       setStatusMsg("Confirm the stake in your wallet…");
-      const hash = await stakeEth(walletClient, amount);
+      const hash = await stakeEth(walletClient, amount, isTestnet);
       setTxHash(hash);
       setPhase("done");
     } catch (err) {
@@ -88,7 +91,7 @@ export function LidoStake() {
           phase={phase}
           message={statusMsg}
           txHash={txHash}
-          explorer={mainnet.blockExplorers?.default?.url}
+          explorer={lidoExplorer(isTestnet)}
           onReset={reset}
         />
       </div>
@@ -100,17 +103,20 @@ export function LidoStake() {
       <Card className="bg-card/60">
         <CardContent className="space-y-4">
           <div className="space-y-1">
-            <p className="flex items-center gap-1.5 text-sm font-medium text-protocol">
-              <Sparkles className="size-4" aria-hidden />
-              Earn on your ETH
-            </p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="flex items-center gap-1.5 text-sm font-medium text-protocol">
+                <Sparkles className="size-4" aria-hidden />
+                Earn on your ETH
+              </p>
+              <TestnetToggle network="Hoodi" />
+            </div>
             <p className="text-sm text-muted-foreground">
               Stake ETH and get stETH — it earns staking rewards over time and
               stays usable across DeFi. You can unstake whenever you like.
             </p>
           </div>
 
-          {/* Network (Lido staking is on Ethereum) */}
+          {/* Network (Lido staking is on Ethereum, or Hoodi in testnet mode) */}
           <div className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-3 py-2">
             <span className="text-xs font-medium text-muted-foreground">
               Network
@@ -142,8 +148,24 @@ export function LidoStake() {
 
           {/* Plain-language earnings */}
           <div className="rounded-lg bg-muted/50 px-3 py-2 text-sm">
-            {apr == null ? (
+            {aprQuery.isPending ? (
               <p className="text-muted-foreground">Loading today&apos;s rate…</p>
+            ) : apr == null ? (
+              <p className="text-muted-foreground">
+                {validAmount ? (
+                  <>
+                    You&apos;ll get about{" "}
+                    <span className="font-medium text-foreground">
+                      {formatAmount(amountNumber)} stETH
+                    </span>
+                    . The live rate isn&apos;t available on {network.name}, but
+                    you can still stake.
+                  </>
+                ) : (
+                  <>The live rate isn&apos;t available on {network.name} — enter
+                  an amount to stake.</>
+                )}
+              </p>
             ) : validAmount ? (
               <p>
                 You&apos;ll get about{" "}

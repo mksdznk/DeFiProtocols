@@ -26,14 +26,14 @@ export interface CompoundMarket {
  * current supply APY (from utilization + supply rate). The market list and all
  * the data are sourced dynamically — nothing is hardcoded.
  */
-export function useCompoundMarkets() {
+export function useCompoundMarkets(testnet = false) {
   const config = useConfig();
 
   return useQuery({
-    queryKey: ["compound", "markets"],
+    queryKey: ["compound", "markets", testnet ? "testnet" : "mainnet"],
     staleTime: 5 * 60_000,
     queryFn: async (): Promise<CompoundMarket[]> => {
-      const cometMarkets = await fetchCometMarkets();
+      const cometMarkets = await fetchCometMarkets(testnet);
 
       // Round 1: base token + utilization for each market.
       const r1 = await readContracts(config, {
